@@ -1,0 +1,1238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Монолит</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: raw concrete control room. Live pixel office on top, a slab of work panels below; panels stack on phones. Single dark brutalist world on purpose. */
+:root{
+  color-scheme: dark;
+  --slab:#141413; --cast:#1f1e1c; --form:#2b2a27; --grit:#3c3a36; --ash:#8f8b84; --bone:#e9e4da;
+  --gold:#d4a84b; --gold-d:#8e6d27; --red:#d8432f; --ok:#5fbf7f;
+  --display:"Anton", "Impact", "Arial Narrow", sans-serif;
+  --body:"Archivo", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono:"JetBrains Mono", Consolas, monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--slab);color:var(--bone);font-family:var(--body);font-size:15px;line-height:1.5}
+body{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px;
+  background-image:repeating-linear-gradient(0deg, transparent 0 63px, rgba(255,255,255,.025) 63px 64px);}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* шапка */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:6px solid var(--form);padding-bottom:12px}
+.brand h1{font:400 clamp(44px,8vw,86px)/.86 var(--display);margin:0;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+.brand h1 span{color:var(--gold)}
+.brand .sub{font:500 12px var(--mono);color:var(--ash);letter-spacing:.14em;text-transform:uppercase;margin-top:8px}
+.status{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;background:var(--cast);border:2px solid var(--grit);color:var(--ash)}
+.chip.on{color:var(--ok);border-color:#2f5a3c}
+.chip.off{color:var(--red);border-color:#5a2a22}
+button.chip{cursor:pointer}
+a.btn{text-decoration:none;display:inline-block;color:inherit}
+a.btn.gold{color:#16120a}
+.chip.cta{background:var(--gold);border-color:var(--gold);color:#16120a;font-size:13px;padding:9px 14px}
+.connect{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--cast);border:2px solid var(--gold);padding:12px 14px}
+.connect p{margin:0;max-width:72ch}
+button.chip:hover{border-color:var(--gold)}
+code{font:500 12px var(--mono);background:var(--slab);padding:1px 5px;color:var(--gold)}
+.form{display:flex;flex-direction:column;gap:8px;max-width:62ch}
+
+/* офис */
+.floor{position:relative;border:6px solid var(--form);background:#000;aspect-ratio:16/9;overflow:hidden}
+.floor canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.ov{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;transform:translate(-50%,-100%);font:700 10px var(--mono);letter-spacing:.06em;color:var(--bone);background:rgba(0,0,0,.72);padding:2px 6px;white-space:nowrap;pointer-events:auto;cursor:pointer;border-left:3px solid var(--gold)}
+.tag.busy{border-left-color:var(--red)}
+.bub{position:absolute;transform:translate(-50%,-100%);max-width:min(240px,40%);font:500 12px/1.35 var(--body);color:#111;background:var(--bone);padding:6px 9px;box-shadow:4px 4px 0 rgba(0,0,0,.6)}
+.bub::after{content:"";position:absolute;left:50%;bottom:-6px;border:6px solid transparent;border-bottom:0;border-top-color:var(--bone);transform:translateX(-50%)}
+.feed{position:absolute;left:10px;bottom:10px;max-width:min(420px,60%);display:flex;flex-direction:column;gap:4px}
+.feed div{font:500 11px/1.35 var(--mono);background:rgba(0,0,0,.66);padding:3px 7px;color:var(--bone)}
+.feed b{color:var(--gold);font-weight:700}
+
+/* команда */
+.team{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.team{grid-template-columns:1fr}}
+/* диджей */
+.deck{background:var(--slab);border:2px solid var(--grit);padding:12px;display:flex;flex-direction:column;gap:4px}
+.deck .np{font:700 10px var(--mono);letter-spacing:.14em;color:var(--red);text-transform:uppercase}
+.deck .tt{font:400 34px/1 var(--display);text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.deck .mt{font:500 12px var(--mono);color:var(--ash);font-variant-numeric:tabular-nums}
+#djViz{width:100%;height:120px;display:block;background:var(--slab);border:2px solid var(--grit)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{background:var(--slab);border:2px solid var(--grit);padding:5px 10px;font:700 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bone)}
+.chips button:hover{border-color:var(--gold);color:var(--gold)}
+.trk{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:var(--slab);border:2px solid var(--grit);padding:8px 10px}
+.trk b{font-size:14px}.trk span{font:500 11px var(--mono);color:var(--ash)}
+.trk.on{border-color:var(--gold)}
+input[type=range]{accent-color:var(--gold)}
+.agent{background:var(--cast);border:2px solid var(--grit);padding:12px;display:flex;flex-direction:column;gap:8px}
+.agent.sel{border-color:var(--gold)}
+.agent .head{display:flex;gap:10px;align-items:center}
+.agent canvas{width:44px;height:44px;image-rendering:pixelated;background:var(--form);flex:none}
+.agent .nm{font:400 24px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.agent .rl{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.agent .st{font:500 11px var(--mono);color:var(--ash)}
+.agent .st.busy{color:var(--red)}
+.agent label{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ash)}
+.agent textarea{width:100%;min-height:58px;resize:vertical;background:var(--slab);border:2px solid var(--grit);padding:6px 8px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* панели */
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:6px solid var(--form)}
+.tabs button{background:none;border:0;padding:10px 16px;font:400 20px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;color:var(--ash)}
+.tabs button[aria-selected="true"]{background:var(--form);color:var(--bone)}
+.tabs button .n{font:700 11px var(--mono);color:var(--gold);margin-left:6px}
+.pane{display:flex;flex-direction:column;gap:14px}
+.pane[hidden]{display:none!important}
+.box{background:var(--cast);border:2px solid var(--grit);padding:14px;display:flex;flex-direction:column;gap:10px}
+.box h3{margin:0;font:400 22px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.hint{color:var(--ash);font-size:13px;margin:0;max-width:72ch}
+textarea.big,input.txt,select{width:100%;background:var(--slab);border:2px solid var(--grit);padding:9px 10px}
+textarea.big{min-height:92px;resize:vertical}
+.btn{background:var(--form);border:2px solid var(--grit);padding:9px 14px;font:700 13px var(--body);letter-spacing:.02em}
+.btn:hover{border-color:var(--ash)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#16120a}
+.btn.red{background:transparent;border-color:#5a2a22;color:#ff8a78}
+.btn:disabled{opacity:.45;cursor:default}
+.msg{font:500 12px var(--mono);color:var(--ash)}
+.msg.err{color:#ff8a78}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+
+/* чат */
+.chat{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding-right:4px}
+.cm{max-width:86%;padding:8px 11px;white-space:pre-wrap;font-size:14px}
+.cm.u{align-self:flex-end;background:var(--gold);color:#16120a}
+.cm.a{align-self:flex-start;background:var(--form)}
+.cm.a b{display:block;font:700 10px var(--mono);letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:2px}
+
+/* идеи и проекты */
+.list{display:flex;flex-direction:column;gap:8px}
+.idea{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--cast);border:2px solid var(--grit);padding:10px 12px}
+.idea .t{font-weight:800}
+.idea .w{color:var(--ash);font-size:13px}
+.idea .by{font:700 10px var(--mono);color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
+.pill{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:2px solid var(--grit)}
+.pill.ok{color:var(--ok);border-color:#2f5a3c}.pill.no{color:var(--ash)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--cast);border:2px solid var(--grit);display:flex;flex-direction:column;cursor:pointer;text-align:left;padding:0}
+.card:hover{border-color:var(--gold)}
+.card .pv{aspect-ratio:4/3;background:var(--slab);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.card .pv img,.card .pv video{width:100%;height:100%;object-fit:cover}
+.card .pv .ty{position:absolute;left:8px;top:8px}
+.card .pv .tx{padding:12px;font-size:12px;color:var(--ash);text-align:left;align-self:stretch;overflow:hidden}
+.card .meta{padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.card .meta b{font-size:14px;line-height:1.25}
+.card .meta span{font:500 11px var(--mono);color:var(--ash)}
+.empty{border:2px dashed var(--grit);padding:22px;color:var(--ash);text-align:center}
+
+/* видеостудия */
+.studio{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.studio{grid-template-columns:1fr}}
+.reel{width:100%;max-width:300px;aspect-ratio:9/16;background:#000;border:6px solid var(--form);display:block}
+.scenes{display:flex;flex-direction:column;gap:6px;max-height:520px;overflow:auto}
+.sc{display:grid;grid-template-columns:34px 1fr;gap:8px;background:var(--slab);border:2px solid var(--grit);padding:8px}
+.sc .i{font:400 22px/1 var(--display);color:var(--gold)}
+.sc .b{font-size:13px}
+.sc .b em{font-style:normal;color:var(--ash);font:500 11px var(--mono)}
+
+/* модалка */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:50}
+.modal .in{background:var(--cast);border:6px solid var(--form);width:min(980px,100%);max-height:100%;display:flex;flex-direction:column}
+.modal .hd{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 14px;border-bottom:2px solid var(--grit)}
+.modal .hd b{font:400 24px/1 var(--display);text-transform:uppercase}
+.modal .bd{padding:14px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.modal iframe{width:100%;height:60vh;border:0;background:#fff}
+.modal img,.modal video{max-width:100%;max-height:62vh;align-self:center}
+.modal pre{white-space:pre-wrap;font:400 14px/1.6 var(--body);margin:0;max-width:72ch}
+.post{background:var(--slab);border:2px solid var(--grit);padding:12px;white-space:pre-wrap;font-size:14px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Офис <span>Монолит</span></h1>
+      <div class="sub">бетон · пять агентов · the world is yours</div>
+    </div>
+    <div class="status" id="status"><button type="button" class="chip" id="chClaude">Claude: проверяю</button><span class="chip" id="chDb">База: проверяю</span><span class="chip" id="chFiles">Файлы: проверяю</span></div>
+  </header>
+
+  <div class="connect" id="connectBar" hidden>
+    <p><b>Claude не подключён.</b> Проще всего открыть офис в Claude: он заработает на твоём аккаунте, подойдёт и бесплатный. Есть API-ключ? Подключи его здесь.</p>
+    <div class="row"><a class="btn gold" id="freeLink" href="https://claude.ai/artifact/SHagQynDL2mjchAmkeXix3" target="_blank" rel="noopener">Открыть бесплатно в Claude</a><button class="btn" id="connectBtn" type="button">У меня есть API-ключ</button></div>
+  </div>
+
+  <section class="floor" aria-label="Офис: агенты работают и отдыхают">
+    <canvas id="room" width="384" height="216"></canvas>
+    <div class="ov" id="ov"></div>
+    <div class="feed" id="feed" aria-live="polite"></div>
+  </section>
+
+  <section class="team" id="team" aria-label="Команда"></section>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-p="task" aria-selected="true">Задача</button>
+    <button role="tab" data-p="chat" aria-selected="false">Вопрос</button>
+    <button role="tab" data-p="studio" aria-selected="false">Видео</button>
+    <button role="tab" data-p="dj" aria-selected="false">Диджей</button>
+    <button role="tab" data-p="ideas" aria-selected="false">Идеи<span class="n" id="nIdeas"></span></button>
+    <button role="tab" data-p="projects" aria-selected="false">Проекты<span class="n" id="nProj"></span></button>
+    <button role="tab" data-p="files" aria-selected="false">Файлы<span class="n" id="nFiles"></span></button>
+  </nav>
+
+  <!-- задача -->
+  <section class="pane" id="p-task">
+    <div class="two">
+      <div class="box">
+        <h3>Дать задачу</h3>
+        <label class="msg" for="tWho">Кому</label>
+        <select id="tWho"></select>
+        <label class="msg" for="tText">Что сделать</label>
+        <textarea class="big" id="tText" placeholder="Например: сделай сценарий тиктока про третью мировую, 30 секунд, резкий хук в начале"></textarea>
+        <div id="tFiles" class="row"></div>
+        <label class="msg" id="ccWrap" hidden><input type="checkbox" id="tCC"> Отдать Claude Code: сделает в терминале, дольше, зато с нейроголосом и ручной анимацией</label>
+        <div class="row"><button class="btn gold" id="tGo">Отдать в работу</button><button class="btn" id="tStop" hidden>Остановить</button><span class="msg" id="tMsg"></span></div>
+      </div>
+      <div class="box" id="ccBox" hidden>
+        <h3>Очередь Claude Code</h3>
+        <p class="hint">Эти задачи забирает Claude Code из терминала. Чтобы он проверял очередь сам, напиши ему: <code>/loop проверяй очередь офиса Монолит и делай задачи</code>.</p>
+        <div class="list" id="ccList"></div>
+      </div>
+      <div class="box">
+        <h3>Что умеют</h3>
+        <p class="hint">Попросишь ролик, и агент соберёт сценарий по сценам. Его можно проиграть и записать в файл во вкладке «Видео».</p>
+        <p class="hint">Попросишь пост для TikTok, и получишь описание, хэштеги, хук и лучшее время для публикации.</p>
+        <p class="hint">Картинки, логотипы и обложки агенты рисуют в SVG, страницы и мини-сайты собирают в HTML. Всё готовое лежит в «Проектах».</p>
+        <p class="hint">Можно приложить загруженные картинки и тексты из «Файлов»: агент их увидит.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- вопрос -->
+  <section class="pane" id="p-chat" hidden>
+    <div class="box">
+      <div class="row"><h3 style="flex:1">Спросить агента</h3><select id="cWho" style="width:auto"></select><button class="btn" id="cClear">Очистить</button></div>
+      <div class="chat" id="chat"></div>
+      <div class="row" style="flex-wrap:nowrap"><input class="txt" id="cText" placeholder="Задай вопрос…"><button class="btn gold" id="cGo">Спросить</button></div>
+      <span class="msg" id="cMsg"></span>
+    </div>
+  </section>
+
+  <!-- видео -->
+  <section class="pane" id="p-studio" hidden>
+    <div class="box">
+      <h3>Видеостудия</h3>
+      <div class="row" style="flex-wrap:nowrap"><input class="txt" id="vText" placeholder="Тема ролика: например «5 вещей, которые надо купить, если началась война»"><button class="btn gold" id="vGo">Снять ролик</button></div>
+      <span class="msg" id="vMsg">Сценарий пишет Марк. Ролик вертикальный 9:16, с субтитрами и музыкой.</span>
+      <div class="studio">
+        <div class="col">
+          <canvas class="reel" id="reel" width="720" height="1280" aria-label="Превью ролика"></canvas>
+        </div>
+        <div class="col" style="display:flex;flex-direction:column;gap:10px">
+          <div class="row">
+            <button class="btn" id="vPlay" disabled>▶ Смотреть</button>
+            <button class="btn" id="vRec" disabled>Записать файл</button>
+            <button class="btn" id="vSave" hidden>Скачать</button>
+            <button class="btn" id="vKeep" hidden>Сохранить в проекты</button>
+            <label class="msg"><input type="checkbox" id="vVoice"> голос браузера в превью</label>
+          </div>
+          <p class="hint">Музыка попадает в записанный файл. Голос браузера слышен только в превью, в файл он не пишется. Нужна озвучка в файле? Попроси меня в чате, сделаю ролик с нейроголосом, как «2 часа».</p>
+          <div class="scenes" id="scenes"><div class="empty">Здесь появится раскадровка: сцены, текст на экране и субтитры.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- диджей -->
+  <section class="pane" id="p-dj" hidden>
+    <div class="two">
+      <div class="box">
+        <h3>Заказать трек</h3>
+        <div class="row" style="flex-wrap:nowrap"><input class="txt" id="djText" placeholder="Например: мрачный фонк как в тиктоках, быстрый"><button class="btn gold" id="djGo">Включить</button></div>
+        <div class="chips" id="djQuick"></div>
+        <span class="msg" id="djMsg">Назови артиста или жанр. Рико сведёт свой трек в этом стиле и подберёт оригиналы, их можно открыть на YouTube, в Яндекс Музыке или SoundCloud.</span>
+        <h3>Свои треки</h3>
+        <p class="hint">MP3 и другие аудиофайлы с компьютера. Играют, пока открыта страница.</p>
+        <input type="file" id="djFiles" accept="audio/*" multiple>
+        <div class="list" id="djLocal"></div>
+      </div>
+      <div class="box">
+        <h3>Пульт</h3>
+        <div class="deck"><span class="np" id="djState">тишина</span><span class="tt" id="djTitle">Ничего не играет</span><span class="mt" id="djMeta">Закажи трек слева</span></div>
+        <canvas id="djViz" width="600" height="120" aria-label="Эквалайзер"></canvas>
+        <div class="row"><button class="btn" id="djStop">Стоп</button><label class="msg" for="djVol">Громкость</label><input type="range" id="djVol" min="0" max="1" step="0.01" value="0.7"></div>
+        <div class="box" id="djRealBox" hidden style="background:var(--slab)">
+          <h3>Оригиналы в интернете</h3>
+          <p class="hint" id="djAbout"></p>
+          <div class="list" id="djReal"></div>
+          <p class="hint">Откроется в новой вкладке. Рико называет треки по памяти, так что название может не найтись. Тогда ищи по имени артиста. Понравился трек? Скачай MP3 туда, где у тебя есть право его скачать, и закинь в «Свои треки» слева.</p>
+        </div>
+        <h3>Уже играло</h3>
+        <div class="list" id="djHist"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- идеи -->
+  <section class="pane" id="p-ideas" hidden>
+    <div class="row"><button class="btn gold" id="iGen">Накидайте идей</button><span class="msg" id="iMsg">Примешь идею, и её автор сразу возьмёт её в работу.</span></div>
+    <div class="list" id="ideas"></div>
+  </section>
+
+  <!-- проекты -->
+  <section class="pane" id="p-projects" hidden>
+    <div class="grid" id="projects"></div>
+  </section>
+
+  <!-- файлы -->
+  <section class="pane" id="p-files" hidden>
+    <div class="box">
+      <h3>Загрузить</h3>
+      <p class="hint">Видео, фото, PDF и тексты до 20 МБ. Картинки и тексты можно приложить к задаче, и агенты их прочитают.</p>
+      <div class="row"><input type="file" id="fIn" multiple accept="video/mp4,video/webm,image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,text/markdown,text/csv,application/json,.md,.txt,.csv,.json"><span class="msg" id="fMsg"></span></div>
+    </div>
+    <div class="grid" id="files"></div>
+  </section>
+</div>
+
+<div class="modal" id="modal" hidden><div class="in"><div class="hd"><b id="mTitle"></b><div class="row" id="mActs"></div></div><div class="bd" id="mBody"></div></div></div>
+
+<script>
+/* ===================== утилиты ===================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a)*k;
+const fmtDate = t => new Date(t).toLocaleString('ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+const ERR = {not_granted:'Ты не разрешил странице обращаться к Claude. Разрешение спросят снова после перезагрузки.', rate_limited:'Слишком много запросов. Подожди минуту и попробуй ещё раз.', invalid_json:'Агент ответил в неверном формате. Нажми ещё раз.', refused:'Claude отказался выполнять эту задачу. Переформулируй её.', session_expired:'Нужно заново войти в Claude.', prompt_too_large:'Слишком длинный запрос. Убери лишние файлы или сократи текст.', cancelled:'Остановлено.'};
+const errText = e => ERR[e?.code] || 'Не получилось связаться с Claude. Попробуй ещё раз.';
+
+/* ===================== данные ===================== */
+const DEF_AGENTS = [
+  {id:'tony', name:'Тони', role:'Креативный директор', task:'Придумывает идеи роликов и сценарии с сильным хуком в первые 2 секунды.', look:{skin:'#c99272', hair:'#0d0b0a', chain:true, glasses:false, beard:false}, desk:0},
+  {id:'mark', name:'Марк', role:'Монтажёр', task:'Собирает ролики во вкладке «Видео»: раскадровка, текст на экране, субтитры.', look:{skin:'#e0b090', hair:'#3a2618', chain:false, glasses:false, beard:true}, desk:1},
+  {id:'den', name:'Ден', role:'TikTok-менеджер', task:'Готовит посты для TikTok: описание, хэштеги, хук, лучшее время публикации, план на неделю.', look:{skin:'#b47e5e', hair:'#151110', chain:false, glasses:true, beard:false}, desk:2},
+  {id:'lev', name:'Лев', role:'Аналитик', task:'Отвечает на вопросы, ищет тренды и разбирает, почему ролики залетают или нет.', look:{skin:'#d8a685', hair:'#6a6a6a', chain:false, glasses:false, beard:true}, desk:3},
+  {id:'dj', name:'Рико', role:'Диджей', task:'Стоит за пультом и ставит треки по заказу: сводит их на синтезаторе в любом стиле, от фонка до майами-диско.', look:{skin:'#a8735a', hair:'#0d0b0a', chain:true, glasses:true, beard:false, phones:true}, desk:'booth'},
+];
+let S = {agents:structuredClone(DEF_AGENTS), ideas:[], log:[], chats:{}, banter:[], tracks:[]};
+let PROJECTS = [], FILES = [];
+let sample = null, db = null, assets = null, downloads = null, useDb = false, aiMode = 'none';
+let stateRef = null, saving = Promise.resolve(), saveTimer = 0, lastSaved = '';
+const LS = 'monolit-office-v1';
+const local = {get(k){ try { return JSON.parse(localStorage.getItem(LS + k) || 'null'); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch(e){} }};
+/* хранилище в браузере: IndexedDB держит состояние, проекты и сами файлы между заходами */
+const IDB = {
+  p:null,
+  open(){ return this.p ||= new Promise((res, rej) => { const r = indexedDB.open('monolit-office', 1); r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); for (const n of ['projects', 'files']) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n, {keyPath:'id'}); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async run(store, mode, fn){ const d = await this.open(); return new Promise((res, rej) => { const t = d.transaction(store, mode), q = fn(t.objectStore(store)); t.oncomplete = () => res(q?.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); },
+  get(s, k){ return this.run(s, 'readonly', o => o.get(k)); }, all(s){ return this.run(s, 'readonly', o => o.getAll()); },
+  put(s, v, k){ return this.run(s, 'readwrite', o => k === undefined ? o.put(v) : o.put(v, k)); }, del(s, k){ return this.run(s, 'readwrite', o => o.delete(k)); },
+};
+const blobUrls = new Map();
+function srcOf(r){ if (r.assetId) return '/_blob/' + r.assetId; if (r.blob){ if (!blobUrls.has(r.id)) blobUrls.set(r.id, URL.createObjectURL(r.blob)); return blobUrls.get(r.id); } return ''; }
+async function blobOf(r){ return r.blob || (await fetch('/_blob/' + r.assetId)).blob(); }
+const byNew = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
+async function loadLocal(){
+  const st = await IDB.get('kv', 'state').catch(() => null) || local.get('state');
+  applyState(st);
+  PROJECTS = (await IDB.all('projects').catch(() => null) || local.get('projects') || []).sort(byNew);
+  FILES = (await IDB.all('files').catch(() => null) || []).sort(byNew);
+  renderProjects(); renderFiles();
+}
+function dbFail(e){ if (useDb && e?.code === 'invalid_argument'){ useDb = false; stateRef = null; loadLocal().then(() => queueSave()); chips(); } }
+
+function agent(id){ return S.agents.find(a => a.id === id) || S.agents[0]; }
+function agentByName(n){ return S.agents.find(a => a.name.toLowerCase() === String(n || '').toLowerCase()); }
+function log(who, text){ S.log.push({at:Date.now(), who, text:String(text).slice(0, 220)}); S.log = S.log.slice(-40); renderFeed(); queueSave(); }
+
+function queueSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const body = {agents:S.agents, ideas:S.ideas.slice(-60), log:S.log.slice(-40), chats:Object.fromEntries(Object.entries(S.chats).map(([k, v]) => [k, v.slice(-16)])), banter:S.banter.slice(-30), tracks:S.tracks.slice(-20)};
+    const js = JSON.stringify(body); if (js === lastSaved) return; lastSaved = js;
+    if (useDb && stateRef) saving = saving.then(() => stateRef.set(body)).catch(dbFail);
+    else IDB.put('kv', body, 'state').catch(() => local.set('state', body));
+  }, 700);
+}
+async function addProject(p){
+  p = {id:uid(), createdAt:Date.now(), ...p};
+  if (p.content && p.content.length > 200000) p.content = p.content.slice(0, 200000);
+  if (useDb && !p.blob){ try { await db.collection('projects').doc(p.id).set(p); return p; } catch(e){ dbFail(e); if (useDb){ PROJECTS.unshift(p); renderProjects(); return p; } } }
+  await IDB.put('projects', p).catch(() => local.set('projects', [p, ...PROJECTS].filter(x => !x.blob).slice(0, 80)));
+  PROJECTS.unshift(p); renderProjects();
+  return p;
+}
+async function delProject(p){
+  if (p.assetId && assets) await assets.delete(p.assetId).catch(() => {});
+  if (useDb && !p.blob) await db.collection('projects').doc(p.id).delete().catch(() => {});
+  else { await IDB.del('projects', p.id).catch(() => {}); PROJECTS = PROJECTS.filter(x => x.id !== p.id); renderProjects(); }
+}
+async function delFile(f){
+  if (f.assetId && assets) await assets.delete(f.assetId).catch(() => {});
+  if (useDb && !f.blob) await db.collection('files').doc(f.id).delete().catch(() => {});
+  else { await IDB.del('files', f.id).catch(() => {}); FILES = FILES.filter(x => x.id !== f.id); renderFiles(); }
+}
+
+/* ===================== пиксельный офис ===================== */
+const cv = $('room'), g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+const PW = 384, PH = 216;
+const DESKS = [{x:58, y:170}, {x:118, y:170}, {x:266, y:170}, {x:326, y:170}];
+const BOOTH = {x:206, y:196};
+const deskPos = (a, i = 0) => a.id === 'dj' || a.desk === 'booth' ? BOOTH : DESKS[a.desk ?? i] || DESKS[0];
+const SPOTS = {sofa:[{x:300, y:136}, {x:318, y:136}, {x:336, y:136}], coffee:{x:362, y:132}, statue:{x:192, y:150}, window:{x:86, y:128}};
+const FONT5 = {T:['111','010','010','010','010'],H:['101','101','111','101','101'],E:['111','100','110','100','111'],W:['101','101','101','111','101'],O:['111','101','101','101','111'],R:['110','101','110','101','101'],L:['100','100','100','100','111'],D:['110','101','101','101','110'],I:['111','010','010','010','111'],S:['111','100','111','001','111'],Y:['101','101','010','010','010'],U:['101','101','101','101','111'],' ':['000','000','000','000','000']};
+function px(x, y, w, h, c){ g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); }
+function ptext(s, x, y, c){ for (const ch of s){ const f = FONT5[ch] || FONT5[' ']; f.forEach((r, j) => [...r].forEach((b, i) => { if (b === '1') px(x + i, y + j, 1, 1, c); })); x += 4; } }
+
+let BG = null;
+function buildBg(){
+  const c = document.createElement('canvas'); c.width = PW; c.height = PH; const b = c.getContext('2d');
+  const P = (x, y, w, h, col) => { b.fillStyle = col; b.fillRect(x, y, w, h); };
+  // стена: бетон с опалубкой и отверстиями от стяжек
+  P(0, 0, PW, 124, '#6d6a65');
+  for (let y = 0; y < 124; y += 12){ P(0, y, PW, 1, '#5a5752'); for (let x = 0; x < PW; x++){ if (Math.random() < .25) P(x, y + 1 + Math.floor(Math.random()*10), 1, 1, Math.random() < .5 ? '#77736e' : '#63605b'); } }
+  for (let y = 6; y < 120; y += 24) for (let x = 8; x < PW; x += 24) P(x, y, 2, 2, '#45423e');
+  // огромное окно: майами на закате
+  const wx = 18, wy = 14, ww = 136, wh = 78;
+  for (let y = 0; y < wh; y++){ const k = y/wh; const r = Math.round(lerp(40, 245, k)), gg = Math.round(lerp(26, 120, k*k)), bb = Math.round(lerp(78, 90, k)); P(wx, wy + y, ww, 1, `rgb(${r},${gg},${bb})`); }
+  P(wx + 92, wy + 44, 18, 18, '#ffcf6a'); P(wx + 94, wy + 42, 14, 2, '#ffcf6a'); P(wx + 94, wy + 62, 14, 1, '#ffcf6a');
+  let x = wx; while (x < wx + ww){ const w = 6 + Math.floor(Math.random()*12), h = 14 + Math.floor(Math.random()*40); P(x, wy + wh - h, w, h, '#1c1428'); for (let yy = wy + wh - h + 3; yy < wy + wh - 2; yy += 4) for (let xx = x + 1; xx < x + w - 1; xx += 3) if (Math.random() < .35) P(xx, yy, 1, 1, '#ffd98a'); x += w + 1; }
+  for (let i = 0; i < 6; i++){ const tx = wx + 6 + i*24; P(tx, wy + wh - 22, 1, 22, '#0e0a14'); P(tx - 5, wy + wh - 24, 11, 2, '#0e0a14'); P(tx - 3, wy + wh - 26, 3, 2, '#0e0a14'); P(tx + 2, wy + wh - 26, 3, 2, '#0e0a14'); }
+  P(wx - 4, wy - 4, ww + 8, 4, '#4f4c48'); P(wx - 4, wy + wh, ww + 8, 6, '#4f4c48'); P(wx - 4, wy, 4, wh, '#4f4c48'); P(wx + ww, wy, 4, wh, '#4f4c48');
+  for (const mx of [wx + 44, wx + 90]) P(mx, wy, 4, wh, '#4f4c48');
+  // ниша со статуей
+  P(166, 12, 52, 112, '#5c5954'); P(168, 14, 48, 110, '#64615c');
+  // бетонные балки
+  P(0, 0, PW, 6, '#4a4743'); P(236, 0, 10, 124, '#5a5752'); P(158, 0, 6, 124, '#5a5752');
+  // правая часть: неон и кофе
+  P(250, 20, 120, 2, '#3a3734');
+  // пол: полированный бетон
+  for (let y = 124; y < PH; y++){ const k = (y - 124)/(PH - 124); P(0, y, PW, 1, `rgb(${Math.round(lerp(58, 74, k))},${Math.round(lerp(56, 71, k))},${Math.round(lerp(53, 67, k))})`); }
+  for (let x = 0; x < PW; x += 48) P(x, 124, 1, PH - 124, '#3f3d3a');
+  P(0, 160, PW, 1, '#45433f'); P(0, 196, PW, 1, '#45433f');
+  P(wx, 126, ww, 30, 'rgba(255,170,90,.08)');
+  P(0, 122, PW, 3, '#2f2d2a');
+  // диван из чёрной кожи
+  P(288, 118, 62, 10, '#121112'); P(286, 126, 66, 12, '#1b1a1c'); P(286, 124, 4, 16, '#0d0c0d'); P(348, 124, 4, 16, '#0d0c0d'); P(292, 120, 58, 1, '#2c2a2e');
+  // растение в бетонном кубе
+  P(270, 120, 10, 12, '#5e5b56'); for (let i = 0; i < 18; i++) P(268 + Math.floor(Math.random()*14), 104 + Math.floor(Math.random()*16), 2, 2, i % 2 ? '#2e5a34' : '#3d7444');
+  // кофе-бар
+  P(352, 104, 28, 26, '#3a3734'); P(356, 96, 14, 10, '#1a1918'); P(358, 98, 3, 2, '#d8432f'); P(352, 104, 28, 2, '#55524d');
+  // лампы
+  for (const lx of [60, 120, 270, 330]){ P(lx, 0, 1, 26, '#222'); P(lx - 5, 26, 11, 4, '#2a2826'); }
+  return c;
+}
+function drawStatue(T){
+  const cx = 192, cy = 70;
+  // постамент
+  px(176, 96, 32, 28, '#77736d'); px(172, 92, 40, 6, '#86827b'); px(176, 120, 32, 4, '#5f5c57');
+  // атланты-подставки
+  px(182, 84, 4, 10, '#b8892f'); px(198, 84, 4, 10, '#b8892f');
+  // глобус
+  for (let y = -16; y <= 16; y++){ const w = Math.floor(Math.sqrt(256 - y*y)); for (let x = -w; x <= w; x++){ const sh = (x + y*.6)/22; const col = sh < -.35 ? '#f1cf72' : sh < .15 ? '#d4a84b' : sh < .5 ? '#b08532' : '#7e5c1e'; px(cx + x, cy + y, 1, 1, col); } }
+  for (let k = -2; k <= 2; k++){ const yy = cy + k*6; const w = Math.floor(Math.sqrt(256 - (k*6)**2)); for (let x = -w; x <= w; x += 2) px(cx + x, yy, 1, 1, '#7e5c1e'); }
+  const ph = (T*.4) % 1;
+  for (let m = 0; m < 3; m++){ const off = Math.sin((ph + m/3)*Math.PI*2)*14; for (let y = -15; y <= 15; y += 2) px(cx + off*Math.sqrt(1 - (y/16)**2), cy + y, 1, 1, '#8a6624'); }
+  // кольцо с надписью
+  px(cx - 38, cy + 10, 77, 9, '#c9973a'); px(cx - 38, cy + 10, 77, 1, '#f1cf72'); px(cx - 38, cy + 18, 77, 1, '#7e5c1e');
+  ptext('THE WORLD IS YOURS', cx - 36, cy + 12, '#2a1d08');
+  // блик
+  if (Math.sin(T*1.3) > .6) px(cx - 7, cy - 9, 2, 2, '#fff3c8');
+}
+
+/* агенты: пиксельные мужчины в чёрном */
+function sprite(b, x, y, a, o){
+  const P = (dx, dy, w, h, c) => { b.fillStyle = c; b.fillRect(Math.round(x + dx), Math.round(y + dy), w, h); };
+  const L = a.look, sit = o.sit, step = o.walk ? Math.floor(o.t*8) % 2 : 0;
+  // ноги
+  if (sit){ P(-3, -4, 7, 2, '#0b0b0c'); P(-3, -2, 2, 2, '#0b0b0c'); P(2, -2, 2, 2, '#0b0b0c'); }
+  else { P(-3, -6, 2, 6 - step, '#0b0b0c'); P(1, -6, 2, 5 + step, '#0b0b0c'); P(-4, -1 + (step ? -1 : 0), 3, 1, '#2a2a2a'); P(1, -1, 3, 1, '#2a2a2a'); }
+  const by = sit ? -13 : -15;
+  // корпус: чёрный пиджак и водолазка
+  P(-4, by, 9, 10, '#141416'); P(-4, by, 9, 1, '#26262a'); P(0, by + 1, 1, 8, '#09090a');
+  if (L.chain) { P(-1, by + 1, 3, 1, '#e3b54a'); P(0, by + 2, 1, 1, '#e3b54a'); }
+  // руки
+  const arm = o.type ? (Math.floor(o.t*10) % 2) : 0;
+  P(-5, by + 1, 1, 7 - arm, '#141416'); P(5, by + 1, 1, 7 - (1 - arm)*(o.type ? 1 : 0), '#141416');
+  P(-5, by + 8 - arm, 1, 1, L.skin); P(5, by + 8 - (o.type ? 1 - arm : 0), 1, 1, L.skin);
+  // голова
+  P(-3, by - 7, 7, 7, L.skin); P(-3, by - 8, 7, 2, L.hair); P(-3, by - 7, 1, 2, L.hair); P(3, by - 7, 1, 1, L.hair);
+  if (L.glasses) P(-2, by - 5, 5, 1, '#050505'); else { P(-1, by - 5, 1, 1, '#1a1210'); P(2, by - 5, 1, 1, '#1a1210'); }
+  if (L.beard) P(-3, by - 2, 7, 2, L.hair === '#6a6a6a' ? '#5a5a5a' : '#2a1c12');
+  P(0, by - 2, 2, 1, '#7a4a3a');
+  if (L.phones){ P(-4, by - 9, 9, 1, '#1a1a1a'); P(-5, by - 6, 2, 3, '#d4a84b'); P(4, by - 6, 2, 3, '#d4a84b'); }
+}
+const ACT = {};
+function initActors(){ S.agents.forEach((a, i) => { if (!ACT[a.id]) ACT[a.id] = {x:deskPos(a, i).x, y:deskPos(a, i).y - 4, tx:null, ty:null, mode:'work', until:performance.now()/1000 + 4 + Math.random()*6, busy:false, bubble:null, bubbleUntil:0}; }); }
+function goTo(ac, x, y, mode){ ac.tx = x; ac.ty = y; ac.next = mode; ac.mode = 'walk'; }
+function think(a, T){
+  const ac = ACT[a.id], d = deskPos(a);
+  if (a.id === 'dj' && BEAT.playing){ if (ac.mode !== 'work' && !(ac.mode === 'walk' && ac.next === 'work')) goTo(ac, d.x, d.y - 4, 'work'); return; }
+  if (ac.busy){ if (ac.mode !== 'work' && ac.mode !== 'walk'){ goTo(ac, d.x, d.y - 4, 'work'); } else if (ac.mode === 'walk' && ac.next !== 'work') goTo(ac, d.x, d.y - 4, 'work'); return; }
+  if (ac.mode === 'walk') return;
+  if (T < ac.until) return;
+  const r = Math.random();
+  if (ac.mode === 'work' && r < .55){ const opts = [['sofa', SPOTS.sofa[Math.floor(Math.random()*3)]], ['coffee', SPOTS.coffee], ['statue', SPOTS.statue], ['window', SPOTS.window]]; const [m, p] = opts[Math.floor(Math.random()*opts.length)]; goTo(ac, p.x + (Math.random()*6 - 3), p.y, m); }
+  else if (ac.mode !== 'work') goTo(ac, d.x, d.y - 4, 'work');
+  ac.until = T + 6 + Math.random()*10;
+  if (Math.random() < .35) chatter(a);
+}
+function chatter(a){
+  const lines = S.banter.filter(b => b.who === a.name).map(b => b.text);
+  const base = {tony:['Хук решает всё. Первые две секунды.', 'Мир принадлежит тем, кто постит каждый день.', 'Нужен ролик, который пересматривают.'], mark:['Склейка на бит, и удержание растёт.', 'Субтитры крупнее, люди смотрят без звука.', 'Монтирую. Не отвлекайте.'], den:['Лучшее время для постинга: 19:00–21:00.', 'Три хэштега, не тридцать.', 'Ответ на комменты тоже контент.'], lev:['Досматриваемость важнее лайков.', 'Тренд живёт 3–5 дней. Успеваем.', 'Посмотрел цифры. Есть мысль.'], dj:['Заказывай, шеф. Любой стиль.', 'Под фонк монтаж идёт быстрее.', 'Тишина в офисе — это грех.']}[a.id] || ['Работаю.'];
+  const pool = lines.length ? lines.concat(base) : base;
+  say(a, pool[Math.floor(Math.random()*pool.length)]);
+}
+function say(a, text, dur = 4.5){ const ac = ACT[a.id]; if (!ac) return; ac.bubble = text; ac.bubbleUntil = performance.now()/1000 + dur; }
+
+let lastT = performance.now()/1000;
+function frame(){
+  const T = performance.now()/1000, dt = Math.min(.1, T - lastT); lastT = T;
+  if (!BG) BG = buildBg();
+  g.drawImage(BG, 0, 0);
+  drawStatue(T);
+  // лампы светят
+  for (const lx of [60, 120, 270, 330]){ const gr = g.createRadialGradient(lx, 30, 2, lx, 60, 60); gr.addColorStop(0, 'rgba(255,220,160,.22)'); gr.addColorStop(1, 'rgba(255,220,160,0)'); g.fillStyle = gr; g.fillRect(lx - 60, 28, 120, 120); }
+  // неон
+  const fl = Math.sin(T*23) > -.9 ? 1 : .3; g.fillStyle = `rgba(216,67,47,${.85*fl})`; ptext('THE WORLD IS YOURS', 262, 30, `rgba(255,120,100,${fl})`);
+  const items = [];
+  djLevel();
+  const bob = BEAT.playing ? Math.round(BEAT.lvl*1.6) : 0;
+  if (BEAT.playing){ for (let k = 0; k < 5; k++){ const lx = 192 + Math.sin(T*.9 + k*1.3)*150, ly = 176 + Math.cos(T*1.1 + k)*20; g.fillStyle = k % 2 ? `rgba(212,168,75,${.08 + BEAT.lvl*.14})` : `rgba(216,67,47,${.07 + BEAT.lvl*.12})`; g.beginPath(); g.ellipse(lx, ly, 26, 7, 0, 0, Math.PI*2); g.fill(); } }
+  S.agents.forEach((a, i) => {
+    const ac = ACT[a.id]; if (!ac) return;
+    think(a, T);
+    if (ac.mode === 'walk'){ const dx = ac.tx - ac.x, dy = ac.ty - ac.y, d = Math.hypot(dx, dy); if (d < 1.2){ ac.x = ac.tx; ac.y = ac.ty; ac.mode = ac.next; } else { const sp = 22*dt; ac.x += dx/d*Math.min(sp, d); ac.y += dy/d*Math.min(sp, d); ac.face = dx; } }
+    const isDj = a.id === 'dj', b = ac.mode === 'walk' ? 0 : isDj ? bob*1.5 : bob;
+    items.push({y:ac.y, draw:() => sprite(g, ac.x, ac.y + b, a, {t:T + i, walk:ac.mode === 'walk', sit:(ac.mode === 'work' && !isDj) || ac.mode === 'sofa', type:ac.mode === 'work' && (ac.busy || (isDj ? BEAT.playing : Math.sin(T*.7 + i) > 0))})});
+  });
+  items.push({y:BOOTH.y + 1, draw:() => {
+    const x = BOOTH.x, y = BOOTH.y, L2 = BEAT.playing ? BEAT.lvl : 0;
+    for (const sx of [-34, 30]){ px(x + sx, y - 22, 9, 22, '#0c0c0d'); px(x + sx + 1, y - 21, 7, 1, '#2a2a2a'); const r = 2 + Math.round(L2*1.6); g.fillStyle = '#2b2a28'; g.beginPath(); g.arc(x + sx + 4.5, y - 8, r + 1, 0, Math.PI*2); g.fill(); g.fillStyle = '#4a4744'; g.beginPath(); g.arc(x + sx + 4.5, y - 8, r - .5, 0, Math.PI*2); g.fill(); px(x + sx + 3, y - 17, 3, 3, '#3a3836'); }
+    px(x - 22, y - 8, 44, 4, '#141416'); px(x - 22, y - 4, 44, 10, '#0c0c0d'); px(x - 22, y - 8, 44, 1, '#d4a84b');
+    for (const tx2 of [-13, 9]){ g.fillStyle = '#1e1e20'; g.beginPath(); g.arc(x + tx2, y - 8, 5, 0, Math.PI*2); g.fill(); const an = BEAT.playing ? T*6 : 0; px(x + tx2 + Math.cos(an)*3, y - 8 + Math.sin(an)*1.5, 1, 1, '#d8432f'); }
+    px(x - 3, y - 11, 6, 3, '#0a0a0b'); px(x - 2, y - 10, 4, 1, BEAT.playing ? '#5fe0a8' : '#1a3a2a');
+    if (BEAT.playing){ g.fillStyle = `rgba(212,168,75,${.15 + L2*.25})`; g.fillRect(x - 22, y - 4, 44, 2); }
+  }});
+  DESKS.forEach((d, i) => items.push({y:d.y + 1, draw:() => {
+    const a = S.agents.find(x => (x.desk ?? 0) === i), busy = a && ACT[a.id]?.busy;
+    px(d.x - 16, d.y - 6, 32, 4, '#101011'); px(d.x - 16, d.y - 2, 32, 2, '#1e1d1c'); px(d.x - 14, d.y, 2, 8, '#101011'); px(d.x + 12, d.y, 2, 8, '#101011');
+    px(d.x - 7, d.y - 18, 14, 10, '#0a0a0b'); px(d.x - 6, d.y - 17, 12, 8, busy ? '#2a1010' : '#0f2a22');
+    for (let k = 0; k < 3; k++) px(d.x - 5, d.y - 16 + k*2.5, busy ? 3 + ((Math.floor(T*6) + k*3) % 8) : 4 + k*2, 1, busy ? '#ff8a6a' : '#5fe0a8');
+    px(d.x - 1, d.y - 8, 2, 2, '#0a0a0b');
+    if (a?.look?.chain && i === (a.desk ?? 0)) px(d.x + 8, d.y - 8, 3, 2, '#d4a84b');
+  }}));
+  items.sort((a, b) => a.y - b.y).forEach(o => o.draw());
+  // свет из окна на пол
+  g.fillStyle = 'rgba(255,170,90,.05)'; g.fillRect(18, 124, 136, 40);
+  overlay(T);
+  requestAnimationFrame(frame);
+}
+const ovEls = {};
+function overlay(T){
+  const ov = $('ov'), r = cv.getBoundingClientRect(), sx = r.width/PW, sy = r.height/PH;
+  S.agents.forEach(a => {
+    const ac = ACT[a.id]; if (!ac) return;
+    let e = ovEls[a.id];
+    if (!e){ e = ovEls[a.id] = {tag:document.createElement('div'), bub:document.createElement('div')}; e.tag.className = 'tag'; e.bub.className = 'bub'; e.tag.onclick = () => selectAgent(a.id); ov.append(e.tag, e.bub); }
+    const top = ac.y - (ac.mode === 'work' || ac.mode === 'sofa' ? 22 : 24);
+    e.tag.textContent = a.name + (ac.busy ? ' · работает' : '');
+    e.tag.classList.toggle('busy', ac.busy);
+    e.tag.style.left = ac.x*sx + 'px'; e.tag.style.top = top*sy + 'px';
+    const show = ac.bubble && T < ac.bubbleUntil;
+    e.bub.hidden = !show; if (show){ e.bub.textContent = ac.bubble; e.bub.style.left = clamp(ac.x*sx, 90, r.width - 90) + 'px'; e.bub.style.top = (top*sy - 22) + 'px'; }
+  });
+}
+function renderFeed(){ const f = $('feed'); f.innerHTML = S.log.slice(-3).map(l => `<div><b>${esc(l.who)}</b> ${esc(l.text)}</div>`).join(''); }
+
+/* ===================== команда ===================== */
+function portrait(c, a){ const b = c.getContext('2d'); b.imageSmoothingEnabled = false; b.clearRect(0, 0, 22, 22); b.fillStyle = '#2b2a27'; b.fillRect(0, 0, 22, 22); sprite(b, 11, 30, a, {t:0}); }
+let selId = null;
+function renderTeam(){
+  const t = $('team'); t.innerHTML = '';
+  S.agents.forEach(a => {
+    const el = document.createElement('article'); el.className = 'agent' + (selId === a.id ? ' sel' : '');
+    const busy = ACT[a.id]?.busy;
+    el.innerHTML = `<div class="head"><canvas width="22" height="22"></canvas><div><div class="nm">${esc(a.name)}</div><div class="rl">${esc(a.role)}</div><div class="st ${busy ? 'busy' : ''}">${busy ? 'занят задачей' : 'свободен'}</div></div></div>
+      <label for="std-${a.id}">Постоянная задача</label><textarea id="std-${a.id}">${esc(a.task)}</textarea>
+      <div class="row"><button class="btn" data-k="give">Дать задачу</button><button class="btn" data-k="ask">Спросить</button>${a.id === 'den' || /tiktok|тикток|tik-tok/i.test(a.role) ? '<button class="btn" data-k="tt">TikTok</button>' : ''}${a.id === 'dj' ? '<button class="btn gold" data-k="dj">Заказать трек</button>' : ''}</div>`;
+    portrait(el.querySelector('canvas'), a);
+    const ta = el.querySelector('textarea'); ta.onchange = () => { a.task = ta.value.trim(); log(a.name, 'обновил постоянную задачу'); queueSave(); };
+    el.querySelector('[data-k=give]').onclick = () => { $('tWho').value = a.id; openTab('task'); $('tText').focus(); };
+    el.querySelector('[data-k=ask]').onclick = () => { $('cWho').value = a.id; openTab('chat'); renderChat(); $('cText').focus(); };
+    const tt = el.querySelector('[data-k=tt]'); if (tt) tt.onclick = () => tiktokInfo(a);
+    const dj = el.querySelector('[data-k=dj]'); if (dj) dj.onclick = () => { openTab('dj'); $('djText').focus(); };
+    t.append(el);
+  });
+  const opts = S.agents.map(a => `<option value="${a.id}">${esc(a.name)} · ${esc(a.role)}</option>`).join('');
+  const w = $('tWho').value, c = $('cWho').value;
+  $('tWho').innerHTML = '<option value="all">Вся команда</option>' + opts; $('tWho').value = w || 'all';
+  $('cWho').innerHTML = opts; $('cWho').value = c || S.agents[3]?.id || S.agents[0].id;
+}
+function selectAgent(id){ selId = id; renderTeam(); const a = agent(id); say(a, 'Слушаю, шеф.', 2.5); }
+function tiktokInfo(a){
+  openModal('TikTok · ' + a.name, `<pre>Сейчас ${esc(a.name)} готовит всё для поста: описание, хэштеги, хук и время публикации. Видео скачиваешь кнопкой «Скачать», а описание копируешь кнопкой «Копировать описание».
+
+Публиковать сам эта страница не может. Ей закрыт доступ в интернет, кроме Claude, а TikTok пускает автопостинг только через официальный Content Posting API. Для него нужно:
+1. Аккаунт разработчика на developers.tiktok.com.
+2. Своё приложение с доступом «Content Posting API».
+3. Проверка приложения в TikTok. До неё видео выкладываются только приватно.
+
+Когда будут ключи, я напишу скрипт для твоего компьютера. Он будет брать готовые ролики из папки и выкладывать их по расписанию, которое составит ${esc(a.name)}.</pre>`, []);
+}
+
+/* ===================== промпты ===================== */
+function teamBrief(){ return S.agents.map(a => `- ${a.name} (${a.role}). Постоянная задача: ${a.task}`).join('\n'); }
+const SPEC_FMT = `{"title":"...","accent":"#hex","scenes":[{"dur":3,"kicker":"короткая метка","text":"КРУПНЫЙ ТЕКСТ НА ЭКРАНЕ (до 6 слов)","sub":"фраза диктора/субтитр (до 14 слов)","visual":"globe|city|chart|phone|clock|money|fire|eye|rain|warning|none","bg":["#hex","#hex"]}]}`;
+async function fileContext(ids){
+  const pick = FILES.filter(f => ids.includes(f.id)), images = [], texts = [];
+  for (const f of pick){
+    try {
+      const b = await blobOf(f);
+      if (/^image\/(png|jpeg|webp|gif)/.test(f.type)) images.push(b);
+      else if (/^text\/|json/.test(f.type)) texts.push(`Файл «${f.name}»:\n` + (await b.text()).slice(0, 5000));
+    } catch(e){}
+  }
+  return {images, texts, names:pick.map(f => f.name)};
+}
+
+/* ===================== задачи ===================== */
+let taskCtl = null;
+async function runTask(text, who, fileIds = []){
+  if (!sample){ $('tMsg').textContent = 'Claude не подключён. Нажми кнопку «Claude» вверху справа.'; return; }
+  const ex = who === 'all' ? null : agent(who);
+  const workers = ex ? [ex] : S.agents.slice(0, 2);
+  workers.forEach(a => { ACT[a.id].busy = true; say(a, 'Беру в работу.', 3); }); renderTeam();
+  log(ex ? ex.name : 'Команда', 'взяли задачу: ' + text.slice(0, 80));
+  $('tGo').disabled = true; $('tStop').hidden = false; $('tMsg').className = 'msg'; $('tMsg').textContent = 'Агенты думают… это может занять до минуты.';
+  taskCtl = new AbortController();
+  try {
+    const fc = await fileContext(fileIds);
+    const prompt = `Ты — команда агентов офиса «Монолит», работают на заказчика, который делает ролики для TikTok на русском.
+Команда:
+${teamBrief()}
+
+Задача заказчика: «${text}»
+Исполнитель: ${ex ? ex.name + ' (' + ex.role + ')' : 'вся команда, выбери, кто лучше справится'}.
+${fc.names.length ? 'Приложены файлы: ' + fc.names.join(', ') + '. Учти их.' : ''}
+${fc.texts.join('\n\n')}
+
+Выбери тип результата по смыслу задачи:
+- "video" — если просят ролик, тикток, видео, сценарий ролика. Тогда заполни "spec" в формате ${SPEC_FMT}. 6–10 сцен, сумма dur 20–45 секунд, первая сцена — резкий хук, последняя — призыв подписаться/написать в комментах. Цвета тёмные и контрастные.
+- "post" — если просят пост, описание, хэштеги, план публикаций для TikTok. Заполни "post": {"hook":"...","caption":"...","hashtags":["#..."],"time":"когда выкладывать и почему","plan":"план, если просили, иначе пусто"}.
+- "svg" — картинка, логотип, обложка, баннер. "content" — полный самодостаточный <svg> с viewBox, без внешних ссылок и шрифтов (только system fonts).
+- "html" — страница, сайт, лендинг, мини-игра. "content" — самодостаточный HTML с <style> внутри, без внешних скриптов.
+- "text" — всё остальное (сценарий текстом, список, анализ). "content" — текст с переносами строк.
+
+Ответь ТОЛЬКО JSON:
+{"by":"имя исполнителя","reply":"1–2 предложения заказчику от имени исполнителя","result":{"type":"video|post|svg|html|text","title":"короткое название","content":"...","spec":{...},"post":{...}},"ideas":[{"by":"имя","title":"идея следующего шага","why":"зачем"}],"banter":[{"who":"имя","text":"короткая реплика в офисе"}]}
+ideas: 1–2 штуки. banter: 2 реплики. Пиши живо, по-русски.`;
+    const r = await sample.json(prompt, {signal:taskCtl.signal, images:fc.images.length ? fc.images.slice(0, 4) : undefined, cache:false});
+    const by = agentByName(r.by) || ex || workers[0];
+    const res = r.result || {type:'text', title:'Результат', content:String(r.reply || '')};
+    const p = await addProject({title:res.title || text.slice(0, 60), type:res.type || 'text', by:by.name, task:text, content:res.content || '', spec:res.type === 'video' ? res.spec : null, post:res.type === 'post' ? res.post : null});
+    say(by, r.reply || 'Готово, шеф.', 6); log(by.name, 'сдал: ' + (res.title || 'результат'));
+    (r.ideas || []).slice(0, 3).forEach(i => S.ideas.push({id:uid(), by:i.by || by.name, title:String(i.title || ''), why:String(i.why || ''), status:'new', at:Date.now()}));
+    (r.banter || []).forEach((b, k) => { const a = agentByName(b.who); if (a){ S.banter.push({who:a.name, text:String(b.text).slice(0, 140)}); setTimeout(() => say(a, b.text, 4), 6500 + k*4200); } });
+    queueSave(); renderIdeas();
+    $('tMsg').textContent = `Готово: «${p.title}» лежит в «Проектах».`;
+    if (p.type === 'video' && p.spec){ loadReel(p.spec, p); }
+  } catch(e){
+    $('tMsg').className = e?.code === 'cancelled' ? 'msg' : 'msg err'; $('tMsg').textContent = errText(e);
+    workers.forEach(a => say(a, e?.code === 'cancelled' ? 'Ок, отбой.' : 'Связь пропала. Повтори.', 3));
+  } finally {
+    workers.forEach(a => ACT[a.id].busy = false); renderTeam();
+    $('tGo').disabled = false; $('tStop').hidden = true; taskCtl = null;
+  }
+}
+$('tGo').onclick = async () => {
+  const t = $('tText').value.trim(); if (!t){ $('tMsg').textContent = 'Напиши, что нужно сделать.'; return; }
+  const ids = [...document.querySelectorAll('#tFiles input:checked')].map(i => i.value);
+  if ($('tCC').checked && useDb){
+    const who = $('tWho').value, q = {id:uid(), text:t, who:who === 'all' ? 'Команда' : agent(who).name, files:ids, status:'new', note:'', createdAt:Date.now()};
+    try { await db.collection('queue').doc(q.id).set(q); $('tMsg').className = 'msg'; $('tMsg').textContent = 'Задача в очереди Claude Code.'; $('tText').value = ''; log(q.who, 'передал задачу в Claude Code: ' + t.slice(0, 60)); }
+    catch(e){ $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Не получилось поставить в очередь.'; }
+    return;
+  }
+  runTask(t, $('tWho').value, ids);
+};
+const QST = {new:['ждёт', ''], working:['в работе', 'ok'], done:['готово', 'ok'], error:['ошибка', 'no']};
+function renderQueue(list){
+  $('ccList').innerHTML = list.length ? '' : '<div class="empty">Пусто. Поставь галочку «Отдать Claude Code» у задачи.</div>';
+  list.forEach(q => { const [l, c] = QST[q.status] || [q.status, '']; const d = document.createElement('div'); d.className = 'idea';
+    d.innerHTML = `<div><div class="by">${esc(q.who)} · ${fmtDate(q.createdAt)}</div><div class="t">${esc(q.text)}</div>${q.note ? `<div class="w">${esc(q.note)}</div>` : ''}</div><span class="pill ${c}">${l}</span>`; $('ccList').append(d); });
+}
+
+/* ===================== подключение Claude ===================== */
+const API = {key:'', model:'claude-opus-5-5'};
+try { const s = JSON.parse(localStorage.getItem(LS + 'api') || 'null'); if (s?.key) Object.assign(API, s); } catch(e){}
+let SDK = null, nativeSample = null;
+const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.39.0/+esm';
+async function apiClient(){ if (!SDK){ const m = await import(SDK_URL); SDK = m.default || m.Anthropic; } return new SDK({apiKey:API.key, dangerouslyAllowBrowser:true}); }
+const b64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+function parseLoose(t){
+  const tries = [t, (t.match(/```(?:json)?\s*([\s\S]*?)```/) || [])[1], (() => { const a = Math.min(...['{', '['].map(c => { const i = t.indexOf(c); return i < 0 ? 1e9 : i; })), b = Math.max(t.lastIndexOf('}'), t.lastIndexOf(']')); return a < b ? t.slice(a, b + 1) : null; })()];
+  for (const s of tries){ if (!s) continue; try { return JSON.parse(s); } catch(e){} }
+  return undefined;
+}
+async function apiSample(input, opts = {}){
+  const client = await apiClient();
+  const msgs = [];
+  for (const m of typeof input === 'string' ? [{role:'user', content:input}] : input){ const last = msgs[msgs.length - 1]; if (last && last.role === m.role) last.content += '\n\n' + m.content; else msgs.push({role:m.role, content:m.content}); }
+  const imgs = opts.images ? [...opts.images].filter(b => /^image\/(png|jpeg|webp|gif)$/.test(b.type)).slice(0, 4) : [];
+  if (imgs.length){ const last = msgs[msgs.length - 1]; last.content = [...await Promise.all(imgs.map(async b => ({type:'image', source:{type:'base64', media_type:b.type, data:await b64(b)}}))), {type:'text', text:last.content}]; }
+  const req = {model:API.model, max_tokens:16000, messages:msgs};
+  if (API.model !== 'claude-haiku-5-5'){ req.betas = ['server-side-fallback-2026-07-01']; req.fallbacks = 'default'; }
+  try {
+    const r = await client.beta.messages.create(req, {signal:opts.signal});
+    if (r.stop_reason === 'refusal') throw {code:'refused'};
+    const text = r.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    if (!text.trim()) throw {code:'empty_completion'};
+    opts.onText?.({text, delta:text});
+    return {text, truncated:r.stop_reason === 'max_tokens'};
+  } catch(e){
+    if (e?.code && !e.status) throw e;
+    const st = e?.status;
+    throw {code:opts.signal?.aborted ? 'cancelled' : st === 401 || st === 403 ? 'bad_key' : st === 429 ? 'rate_limited' : st === 400 ? 'bad_request' : st === 529 ? 'overloaded' : 'upstream_error', message:String(e?.message || e)};
+  }
+}
+apiSample.json = async (input, opts) => { const {text} = await apiSample(typeof input === 'string' ? input + '\n\nОтветь только JSON, без пояснений и без markdown.' : input, opts); const v = parseLoose(text); if (v === undefined) throw {code:'invalid_json', text}; return v; };
+Object.assign(ERR, {bad_key:'Ключ API не подошёл. Проверь его: кнопка «Claude» вверху справа.', bad_request:'Claude отклонил запрос. Попробуй сформулировать короче.', overloaded:'Claude сейчас перегружен. Попробуй через минуту.', empty_completion:'Claude ничего не ответил. Попробуй ещё раз.'});
+function pickAi(){
+  if (nativeSample && !(API.key && API.prefer)) { sample = nativeSample; aiMode = 'native'; }
+  else if (API.key){ sample = apiSample; aiMode = 'api'; }
+  else { sample = null; aiMode = 'none'; }
+  chips();
+}
+function chips(){
+  chip('chClaude', !!sample, aiMode === 'api' ? 'Claude: по ключу ⚙' : 'Claude: на связи', 'Подключить Claude');
+  if (!sample && !window.claude) $('chClaude').className = 'chip cta';
+  $('connectBar').hidden = !!sample || !!window.claude;
+  chip('chDb', true, useDb ? 'Сохранение: облако Claude' : 'Сохранение: этот браузер', '');
+  chip('chFiles', true, useDb && assets ? 'Файлы: облако Claude' : 'Файлы: этот браузер', '');
+  $('ccWrap').hidden = !useDb; $('ccBox').hidden = !useDb;
+}
+function connectModal(){
+  if (window.claude){ openModal('Claude', `<p class="hint">${nativeSample ? 'Офис открыт внутри Claude и работает через аккаунт того, кто его открыл. Ничего подключать не нужно.' : 'Claude пока не отвечает. Обнови страницу. Если не поможет, разреши странице обращаться к Claude, когда она спросит.'}</p><p class="hint">Ключ API нужен только в версии офиса, которая лежит на GitHub Pages.</p>`, []); return; }
+  const MODELS = [['claude-opus-5-5', 'Claude Opus 5.5 · умнее всех, дороже'], ['claude-sonnet-5-5', 'Claude Sonnet 5.5 · быстрее и дешевле'], ['claude-haiku-5-5', 'Claude Haiku 5.5 · самый дешёвый']];
+  openModal('Подключить Claude', `<div class="form">
+    <div class="connect" style="border-color:var(--gold)"><p><b>Бесплатно:</b> открой офис в Claude и войди в свой аккаунт, подойдёт и бесплатный. Запросы пойдут в счёт лимитов твоего плана, платить за API не нужно.</p><a class="btn gold" href="https://claude.ai/artifact/SHagQynDL2mjchAmkeXix3" target="_blank" rel="noopener">Открыть в Claude</a></div>
+    <p class="hint"><b>Или по API-ключу.</b> Офис работает прямо здесь, но запросы оплачиваются с твоего счёта в Anthropic. Ключ берётся на console.anthropic.com в разделе API Keys.</p>
+    <label class="msg" for="apiKey">API-ключ</label><input class="txt" id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-..." value="${esc(API.key)}">
+    <label class="msg" for="apiModel">Модель</label><select id="apiModel">${MODELS.map(([v, l]) => `<option value="${v}"${v === API.model ? ' selected' : ''}>${l}</option>`).join('')}</select>
+    ${nativeSample ? `<label class="msg"><input type="checkbox" id="apiPrefer"${API.prefer ? ' checked' : ''}> Использовать ключ вместо аккаунта Claude</label>` : ''}
+    <p class="hint">Ключ хранится только в этом браузере и уходит напрямую в Anthropic. Не вводи его на чужом компьютере. Если ключ утёк, удали его в консоли и создай новый.</p>
+    <span class="msg" id="apiMsg"></span></div>`,
+    [['Сохранить', async () => {
+      API.key = $('apiKey').value.trim(); API.model = $('apiModel').value; API.prefer = !!$('apiPrefer')?.checked;
+      try { localStorage.setItem(LS + 'api', JSON.stringify(API)); } catch(e){}
+      if (!API.key){ pickAi(); closeModal(); return; }
+      $('apiMsg').className = 'msg'; $('apiMsg').textContent = 'Проверяю ключ…';
+      try { await apiSample('Ответь одним словом: готов'); pickAi(); $('apiMsg').textContent = 'Подключено.'; setTimeout(closeModal, 700); log('Тони', 'Claude подключён по ключу. Работаем.'); }
+      catch(e){ $('apiMsg').className = 'msg err'; $('apiMsg').textContent = errText(e); }
+    }], ['Удалить ключ', () => { API.key = ''; API.prefer = false; try { localStorage.removeItem(LS + 'api'); } catch(e){} pickAi(); closeModal(); }, 'red']]);
+}
+$('chClaude').onclick = connectModal; $('connectBtn').onclick = connectModal;
+$('tStop').onclick = () => taskCtl?.abort();
+function renderTaskFiles(){
+  const usable = FILES.filter(f => /^image\/(png|jpeg|webp|gif)|^text\/|json/.test(f.type));
+  $('tFiles').innerHTML = usable.length ? '<span class="msg">Приложить:</span>' + usable.slice(0, 12).map(f => `<label class="msg"><input type="checkbox" value="${f.id}"> ${esc(f.name)}</label>`).join('') : '';
+}
+
+/* ===================== чат ===================== */
+let chatCtl = null;
+function renderChat(){
+  const id = $('cWho').value, a = agent(id), list = S.chats[id] || [];
+  $('chat').innerHTML = list.length ? list.map(m => m.role === 'user' ? `<div class="cm u">${esc(m.content)}</div>` : `<div class="cm a"><b>${esc(a.name)}</b>${esc(m.content)}</div>`).join('') : `<div class="empty">Спроси ${esc(a.name)} о чём угодно: идеи, тренды, как поднять досмотры.</div>`;
+  $('chat').scrollTop = 1e6;
+}
+$('cWho').onchange = renderChat;
+$('cClear').onclick = () => { S.chats[$('cWho').value] = []; renderChat(); queueSave(); };
+async function ask(){
+  const q = $('cText').value.trim(); if (!q || chatCtl) return;
+  if (!sample){ $('cMsg').textContent = 'Claude не подключён. Нажми кнопку «Claude» вверху справа.'; return; }
+  const id = $('cWho').value, a = agent(id), turns = (S.chats[id] = S.chats[id] || []);
+  turns.push({role:'user', content:q}); $('cText').value = ''; renderChat();
+  const bubble = document.createElement('div'); bubble.className = 'cm a'; bubble.innerHTML = `<b>${esc(a.name)}</b>Думаю…`; $('chat').append(bubble); $('chat').scrollTop = 1e6;
+  ACT[id].busy = true; renderTeam(); say(a, 'Сейчас отвечу.', 2);
+  chatCtl = new AbortController();
+  const rules = `Ты — ${a.name}, ${a.role} в офисе «Монолит» (бруталистский офис, команда делает TikTok-ролики на русском). Твоя постоянная задача: ${a.task}
+Коллеги: ${S.agents.filter(x => x.id !== id).map(x => x.name + ' — ' + x.role).join(', ')}.
+Последние проекты: ${PROJECTS.slice(0, 6).map(p => p.title).join('; ') || 'пока нет'}.
+Отвечай по-русски, коротко и по делу, как живой человек из команды. Без markdown-разметки.`;
+  try {
+    const {text} = await sample([{role:'user', content:rules}, ...turns.slice(-12)], {cache:false, signal:chatCtl.signal, onText:({text}) => { bubble.innerHTML = `<b>${esc(a.name)}</b>${esc(text)}`; $('chat').scrollTop = 1e6; }});
+    turns.push({role:'assistant', content:text}); say(a, text.slice(0, 90) + (text.length > 90 ? '…' : ''), 5); $('cMsg').textContent = '';
+  } catch(e){ bubble.remove(); turns.pop(); $('cText').value = q; $('cMsg').className = 'msg err'; $('cMsg').textContent = errText(e); }
+  finally { ACT[id].busy = false; chatCtl = null; renderTeam(); renderChat(); queueSave(); }
+}
+$('cGo').onclick = ask; $('cText').onkeydown = e => { if (e.key === 'Enter') ask(); };
+
+/* ===================== идеи ===================== */
+function renderIdeas(){
+  const L = [...S.ideas].reverse(); $('nIdeas').textContent = S.ideas.filter(i => i.status === 'new').length || '';
+  $('ideas').innerHTML = L.length ? '' : '<div class="empty">Идей пока нет. Нажми «Накидайте идей» или дай задачу: агенты сами предложат, что делать дальше.</div>';
+  L.forEach(i => {
+    const el = document.createElement('div'); el.className = 'idea';
+    el.innerHTML = `<div><div class="by">${esc(i.by)}</div><div class="t">${esc(i.title)}</div><div class="w">${esc(i.why)}</div></div><div class="row">${i.status === 'new' ? '<button class="btn gold" data-k="y">Делаем</button><button class="btn" data-k="n">Нет</button>' : `<span class="pill ${i.status === 'accepted' ? 'ok' : 'no'}">${i.status === 'accepted' ? 'в работе' : 'отклонена'}</span>`}</div>`;
+    const y = el.querySelector('[data-k=y]'), n = el.querySelector('[data-k=n]');
+    if (y) y.onclick = () => { i.status = 'accepted'; renderIdeas(); queueSave(); const a = agentByName(i.by); runTask(i.title + '. ' + i.why, a ? a.id : 'all'); openTab('task'); $('tText').value = i.title; };
+    if (n) n.onclick = () => { i.status = 'declined'; renderIdeas(); queueSave(); const a = agentByName(i.by); if (a) say(a, 'Понял. Придумаю лучше.', 3); };
+    $('ideas').append(el);
+  });
+}
+$('iGen').onclick = async () => {
+  if (!sample){ $('iMsg').textContent = 'Claude не подключён. Нажми кнопку «Claude» вверху справа.'; return; }
+  $('iGen').disabled = true; $('iMsg').className = 'msg'; $('iMsg').textContent = 'Команда штурмит…'; S.agents.forEach(a => say(a, '…', 2));
+  try {
+    const r = await sample.json(`Команда офиса «Монолит» делает вирусные TikTok-ролики на русском.\n${teamBrief()}\nПоследние проекты: ${PROJECTS.slice(0, 8).map(p => p.title).join('; ') || 'нет'}.\nКаждый агент предлагает по одной идее по своей роли. Ответь только JSON-массивом: [{"by":"имя","title":"идея одной фразой","why":"почему залетит"}]`, {modelTier:'quick', cache:false});
+    (Array.isArray(r) ? r : []).forEach(i => { S.ideas.push({id:uid(), by:String(i.by || ''), title:String(i.title || ''), why:String(i.why || ''), status:'new', at:Date.now()}); const a = agentByName(i.by); if (a) say(a, i.title, 5); });
+    renderIdeas(); queueSave(); $('iMsg').textContent = 'Готово. Прими, что нравится.';
+  } catch(e){ $('iMsg').className = 'msg err'; $('iMsg').textContent = errText(e); }
+  finally { $('iGen').disabled = false; }
+};
+
+/* ===================== проекты ===================== */
+const TYPE = {video:'ролик', post:'пост TikTok', svg:'картинка', html:'страница', text:'текст', upload:'запись'};
+function renderProjects(){
+  $('nProj').textContent = PROJECTS.length || '';
+  const el = $('projects'); el.innerHTML = '';
+  if (!PROJECTS.length){ el.innerHTML = '<div class="empty" style="grid-column:1/-1">Готовые работы будут здесь: ролики, посты, картинки, страницы. Дай первую задачу во вкладке «Задача».</div>'; return; }
+  PROJECTS.forEach(p => {
+    const c = document.createElement('button'); c.className = 'card';
+    let pv = '';
+    if (p.type === 'svg' && p.content) pv = `<img alt="" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.content)}">`;
+    else if (p.assetId || p.blob) pv = `<video muted playsinline preload="metadata" src="${srcOf(p)}"></video>`;
+    else if (p.type === 'video' && p.spec) pv = `<div class="tx" style="font:400 26px/1 var(--display);color:var(--bone);text-transform:uppercase">${esc(p.spec.scenes?.[0]?.text || p.title)}</div>`;
+    else if (p.type === 'post' && p.post) pv = `<div class="tx">${esc(p.post.hook || '')}<br><br>${esc((p.post.hashtags || []).join(' '))}</div>`;
+    else pv = `<div class="tx">${esc(String(p.content || '').replace(/<[^>]+>/g, ' ').slice(0, 220))}</div>`;
+    c.innerHTML = `<div class="pv">${pv}<span class="pill ty" style="background:var(--slab)">${TYPE[p.type] || p.type}</span></div><div class="meta"><b>${esc(p.title)}</b><span>${esc(p.by || '')} · ${fmtDate(p.createdAt)}</span></div>`;
+    c.onclick = () => openProject(p);
+    el.append(c);
+  });
+}
+function postText(p){ const o = p.post || {}; return [o.hook, o.caption, (o.hashtags || []).join(' ')].filter(Boolean).join('\n\n'); }
+async function copy(text, btn){ try { await navigator.clipboard.writeText(text); btn.textContent = 'Скопировано'; } catch(e){ btn.textContent = 'Выдели текст и скопируй вручную'; } }
+function openProject(p){
+  const acts = [];
+  let body = '';
+  if (p.type === 'svg') body = `<img alt="${esc(p.title)}" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.content)}">`;
+  else if (p.type === 'html') body = `<iframe sandbox="allow-scripts" title="${esc(p.title)}"></iframe>`;
+  else if (p.assetId || p.blob) body = `<video controls playsinline src="${srcOf(p)}"></video>`;
+  else if (p.type === 'post') body = `<div class="post" id="postTxt">${esc(postText(p))}</div><p class="hint"><b>Когда выкладывать:</b> ${esc(p.post?.time || '')}</p>${p.post?.plan ? `<pre>${esc(p.post.plan)}</pre>` : ''}`;
+  else if (p.type === 'video') body = `<p class="hint">Сценарий ролика из ${p.spec?.scenes?.length || 0} сцен. Открой его в студии, чтобы посмотреть и записать файл.</p>` + (p.spec?.scenes || []).map((s, i) => `<div class="sc"><div class="i">${i + 1}</div><div class="b"><b>${esc(s.text)}</b><br>${esc(s.sub)} <em>${s.dur}с · ${esc(s.visual)}</em></div></div>`).join('');
+  else body = `<pre>${esc(p.content)}</pre>`;
+  body += `<p class="msg">Задача: ${esc(p.task || '—')} · ${esc(p.by || '')} · ${fmtDate(p.createdAt)}</p>`;
+  if (p.type === 'video' && p.spec) acts.push(['Открыть в студии', () => { closeModal(); openTab('studio'); loadReel(p.spec, p); }]);
+  if (p.type === 'post') acts.push(['Копировать описание', (b) => copy(postText(p), b)]);
+  if (p.assetId || p.blob) acts.push(['Скачать', () => saveBlobFromAsset(p)]);
+  if (p.type === 'svg') acts.push(['Скачать SVG', () => saveData(p.title + '.svg', new Blob([p.content], {type:'image/svg+xml'}))]);
+  if (p.type === 'html') acts.push(['Скачать HTML', () => saveData(p.title + '.html', new Blob([p.content], {type:'text/html'}))]);
+  if (p.type === 'text') acts.push(['Скачать TXT', () => saveData(p.title + '.txt', new Blob([p.content], {type:'text/plain'}))]);
+  acts.push(['Удалить', async (b) => { if (b.dataset.sure){ await delProject(p); closeModal(); } else { b.dataset.sure = 1; b.textContent = 'Точно удалить?'; } }, 'red']);
+  openModal(p.title, body, acts);
+  if (p.type === 'html') $('mBody').querySelector('iframe').srcdoc = p.content;
+}
+function openModal(title, html, acts){
+  $('mTitle').textContent = title; $('mBody').innerHTML = html; $('mActs').innerHTML = '';
+  for (const [l, fn, cls] of acts){ const b = document.createElement('button'); b.className = 'btn' + (cls ? ' ' + cls : ''); b.textContent = l; b.onclick = () => fn(b); $('mActs').append(b); }
+  const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Закрыть'; x.onclick = closeModal; $('mActs').append(x);
+  $('modal').hidden = false; x.focus();
+}
+function closeModal(){ $('modal').hidden = true; $('mBody').innerHTML = ''; }
+$('modal').onclick = e => { if (e.target === $('modal')) closeModal(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('modal').hidden) closeModal(); });
+async function saveData(name, blob){
+  const fname = name.replace(/[\\/:*?"<>|]+/g, '-');
+  if (downloads){ try { await downloads.save({filename:fname, data:blob}); } catch(e){} return; }
+  if (window.claude){ openModal('Скачивание', '<p class="hint">Скачивание недоступно в этом окне. Открой страницу в Claude.</p>', []); return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function saveBlobFromAsset(p){ try { const b = await blobOf(p); saveData((p.title || 'video') + (/mp4/.test(b.type) ? '.mp4' : '.webm'), b); } catch(e){} }
+
+/* ===================== файлы ===================== */
+function renderFiles(){
+  $('nFiles').textContent = FILES.length || '';
+  const el = $('files'); el.innerHTML = '';
+  if (!FILES.length){ el.innerHTML = '<div class="empty" style="grid-column:1/-1">Загруженные видео, фото и документы появятся здесь.</div>'; }
+  FILES.forEach(f => {
+    const c = document.createElement('button'); c.className = 'card';
+    const src = srcOf(f);
+    const pv = /^image\//.test(f.type) ? `<img alt="" src="${src}">` : /^video\//.test(f.type) ? `<video muted playsinline preload="metadata" src="${src}"></video>` : `<div class="tx" style="font:400 30px var(--display);color:var(--ash)">${esc((f.name.split('.').pop() || '').toUpperCase())}</div>`;
+    c.innerHTML = `<div class="pv">${pv}</div><div class="meta"><b>${esc(f.name)}</b><span>${(f.size/1048576).toFixed(1)} МБ · ${fmtDate(f.createdAt)}</span></div>`;
+    c.onclick = () => {
+      const body = /^image\//.test(f.type) ? `<img alt="${esc(f.name)}" src="${src}">` : /^video\//.test(f.type) ? `<video controls playsinline src="${src}"></video>` : /^text\/|json/.test(f.type) ? '<pre id="fTxt">Загружаю…</pre>' : '<p class="hint">Предпросмотр недоступен. Скачай файл.</p>';
+      openModal(f.name, body, [['Скачать', async () => { try { saveData(f.name, await blobOf(f)); } catch(e){} }], ['Удалить', async (b) => { if (!b.dataset.sure){ b.dataset.sure = 1; b.textContent = 'Точно удалить?'; return; } await delFile(f); closeModal(); }, 'red']]);
+      if (/^text\/|json/.test(f.type)) fetch(src).then(r => r.text()).then(t => { const p = $('fTxt'); if (p) p.textContent = t.slice(0, 20000); }).catch(() => {});
+    };
+    el.append(c);
+  });
+  renderTaskFiles();
+}
+const TXT_T = {md:'text/markdown', txt:'text/plain', csv:'text/csv', json:'application/json'};
+$('fIn').onchange = async () => {
+  const list = [...$('fIn').files]; if (!list.length) return;
+  $('fMsg').className = 'msg';
+  for (const f of list){
+    $('fMsg').textContent = 'Загружаю ' + f.name + '…';
+    const ext = (f.name.split('.').pop() || '').toLowerCase(), type = TXT_T[ext] || f.type || 'application/octet-stream';
+    try {
+      if (useDb && assets){
+        const r = await assets.upload(f, {type});
+        const doc = {id:uid(), name:f.name, type:r.contentType, size:r.sizeBytes, assetId:r.id, createdAt:Date.now()};
+        await db.collection('files').doc(doc.id).set(doc);
+      } else {
+        const doc = {id:uid(), name:f.name, type, size:f.size, blob:new Blob([f], {type}), createdAt:Date.now()};
+        await IDB.put('files', doc); FILES.unshift(doc); renderFiles();
+      }
+      log('Лев', 'принял файл: ' + f.name);
+    } catch(e){ $('fMsg').className = 'msg err'; $('fMsg').textContent = (e?.name === 'QuotaExceededError' ? 'В браузере кончилось место. Удали ненужные файлы.' : null) || ({too_large:'Файл больше 20 МБ. Сожми его и загрузи снова.', unsupported_type:'Этот тип файла не поддерживается. Подойдут MP4, WebM, PNG, JPG, WebP, GIF, PDF и тексты.', quota_or_state:'Место для файлов закончилось. Удали ненужные.', rate_limited:'Слишком часто. Подожди немного.'})[e?.code] || 'Не получилось загрузить ' + f.name + '.'; $('fIn').value = ''; return; }
+  }
+  $('fMsg').textContent = 'Загружено.'; $('fIn').value = '';
+};
+
+/* ===================== видеостудия ===================== */
+const RC = $('reel'), R = RC.getContext('2d'), RW = 720, RH = 1280;
+let REEL = null, reelProj = null, reelT0 = 0, reelPlaying = false, reelRec = null, reelBlob = null, AC = null, musicNodes = null, recDest = null;
+const GRAIN = (() => { const c = document.createElement('canvas'); c.width = c.height = 160; const b = c.getContext('2d'), d = b.createImageData(160, 160); for (let i = 0; i < d.data.length; i += 4){ const v = Math.random()*255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } b.putImageData(d, 0, 0); return c; })();
+function normSpec(s){
+  const sc = (s?.scenes || []).filter(x => x && (x.text || x.sub)).slice(0, 14).map(x => ({dur:clamp(+x.dur || 3, 1.5, 8), kicker:String(x.kicker || ''), text:String(x.text || ''), sub:String(x.sub || ''), visual:String(x.visual || 'none'), bg:Array.isArray(x.bg) && x.bg.length >= 2 ? x.bg.map(String) : ['#141413', '#3c3a36']}));
+  return {title:String(s?.title || 'Ролик'), accent:/^#[0-9a-f]{6}$/i.test(s?.accent) ? s.accent : '#d4a84b', scenes:sc.length ? sc : [{dur:3, kicker:'', text:'ПУСТО', sub:'', visual:'none', bg:['#141413', '#3c3a36']}]};
+}
+function loadReel(spec, proj){
+  REEL = normSpec(spec); reelProj = proj || null; reelBlob = null;
+  $('vPlay').disabled = false; $('vRec').disabled = false; $('vSave').hidden = true; $('vKeep').hidden = true;
+  const total = REEL.scenes.reduce((a, s) => a + s.dur, 0);
+  $('vMsg').className = 'msg'; $('vMsg').textContent = `«${REEL.title}» · ${REEL.scenes.length} сцен · ${Math.round(total)} сек`;
+  $('scenes').innerHTML = REEL.scenes.map((s, i) => `<div class="sc"><div class="i">${i + 1}</div><div class="b"><b>${esc(s.text)}</b><br>${esc(s.sub)} <em>${s.dur}с · ${esc(s.visual)}</em></div></div>`).join('');
+  reelPlaying = false; reelT0 = performance.now()/1000 - .5;
+}
+function wrapLines(ctx, text, maxW){ const words = text.split(/\s+/), lines = []; let cur = ''; for (const w of words){ const t = cur ? cur + ' ' + w : w; if (ctx.measureText(t).width > maxW && cur){ lines.push(cur); cur = w; } else cur = t; } if (cur) lines.push(cur); return lines; }
+function visual(kind, p, T, acc){
+  const c = R; c.save(); c.translate(360, 470);
+  const a = c.globalAlpha;
+  switch (kind){
+    case 'globe': { const r = 190; const gr = c.createRadialGradient(-60, -70, 20, 0, 0, r); gr.addColorStop(0, '#f6d989'); gr.addColorStop(.6, '#c9973a'); gr.addColorStop(1, '#5e4214'); c.fillStyle = gr; c.beginPath(); c.arc(0, 0, r, 0, Math.PI*2); c.fill();
+      c.strokeStyle = 'rgba(70,45,10,.6)'; c.lineWidth = 4; for (let k = -2; k <= 2; k++){ c.beginPath(); c.ellipse(0, k*60, Math.sqrt(r*r - (k*60)**2), 14, 0, 0, Math.PI*2); c.stroke(); } for (let m = 0; m < 4; m++){ const w = Math.cos(T*.6 + m*Math.PI/4)*r; c.beginPath(); c.ellipse(0, 0, Math.abs(w), r, 0, 0, Math.PI*2); c.stroke(); }
+      c.fillStyle = '#b8862f'; c.fillRect(-250, 150, 500, 64); c.fillStyle = '#2a1d08'; c.font = `400 44px ${getComputedStyle(document.body).getPropertyValue('--display')}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('THE WORLD IS YOURS', 0, 184); break; }
+    case 'city': for (let L = 0; L < 3; L++){ const rr = rngS(7 + L); let x = -400 + ((T*20*(L + 1)) % 80); while (x < 400){ const w = 40 + rr()*70, h = 120 + rr()*280 - L*60; c.fillStyle = ['#1a1a24', '#121218', '#08080b'][L]; c.fillRect(x, 260 - h + L*40, w, h); for (let yy = 270 - h + L*40; yy < 250 + L*40; yy += 22) for (let xx = x + 8; xx < x + w - 8; xx += 16) if (rr() < .4){ c.fillStyle = 'rgba(255,214,140,.8)'; c.fillRect(xx, yy, 7, 10); } x += w + 6; } } break;
+    case 'chart': { const n = 6, k = clamp(p*1.6); for (let i = 0; i < n; i++){ const h = (60 + i*55)*k; c.fillStyle = i === n - 1 ? acc : 'rgba(255,255,255,.25)'; c.fillRect(-270 + i*92, 240 - h, 70, h); } c.strokeStyle = acc; c.lineWidth = 12; c.lineCap = 'round'; c.beginPath(); c.moveTo(-250, 200); c.lineTo(-250 + 500*k, 200 - 380*k); c.stroke(); c.beginPath(); c.moveTo(-250 + 500*k - 40, 200 - 380*k); c.lineTo(-250 + 500*k, 200 - 380*k); c.lineTo(-250 + 500*k, 200 - 380*k + 40); c.stroke(); break; }
+    case 'phone': { c.fillStyle = '#0c0c0e'; c.beginPath(); c.roundRect(-150, -280, 300, 560, 40); c.fill(); c.strokeStyle = '#555'; c.lineWidth = 6; c.stroke(); for (let i = 0; i < 4; i++){ const k = clamp(p*4 - i); if (k <= 0) continue; c.globalAlpha = a*k; c.fillStyle = i === 0 ? acc : 'rgba(255,255,255,.14)'; c.beginPath(); c.roundRect(-130, -230 + i*110 + (1 - k)*30, 260, 90, 18); c.fill(); c.fillStyle = i === 0 ? '#111' : '#fff'; c.fillRect(-110, -205 + i*110 + (1 - k)*30, 140, 12); c.fillRect(-110, -180 + i*110 + (1 - k)*30, 200, 10); } c.globalAlpha = a; break; }
+    case 'clock': { c.fillStyle = '#efe8da'; c.beginPath(); c.arc(0, 0, 200, 0, Math.PI*2); c.fill(); c.strokeStyle = '#111'; c.lineWidth = 10; c.stroke(); for (let i = 0; i < 12; i++){ c.save(); c.rotate(i*Math.PI/6); c.fillStyle = '#111'; c.fillRect(-4, -190, 8, 28); c.restore(); } c.save(); c.rotate(T*2); c.fillStyle = acc; c.fillRect(-4, -170, 8, 170); c.restore(); c.save(); c.rotate(T*.17); c.fillStyle = '#111'; c.fillRect(-8, -110, 16, 110); c.restore(); break; }
+    case 'money': for (let i = 0; i < 18; i++){ const rr = rngS(i + 3), x = -330 + rr()*660, y = -400 + ((T*160 + rr()*900) % 900); c.save(); c.translate(x, y); c.rotate(Math.sin(T*2 + i)*.6); c.fillStyle = i % 3 ? '#5a9a6a' : '#8a6aa8'; c.fillRect(-60, -28, 120, 56); c.strokeStyle = 'rgba(0,0,0,.3)'; c.lineWidth = 3; c.strokeRect(-52, -20, 104, 40); c.restore(); } break;
+    case 'fire': for (let i = 0; i < 26; i++){ const rr = rngS(i + 11), x = -220 + rr()*440, k = (T*1.2 + rr()) % 1, y = 260 - k*500, s = (1 - k)*90 + 20; const gr = c.createRadialGradient(x, y, 2, x, y, s); gr.addColorStop(0, 'rgba(255,230,140,.9)'); gr.addColorStop(.5, 'rgba(255,110,30,.6)'); gr.addColorStop(1, 'rgba(120,20,0,0)'); c.fillStyle = gr; c.fillRect(x - s, y - s, s*2, s*2); } break;
+    case 'eye': { const bl = Math.sin(T*1.7) > .97 ? .1 : 1; c.fillStyle = '#efe8da'; c.beginPath(); c.ellipse(0, 0, 260, 140*bl, 0, 0, Math.PI*2); c.fill(); if (bl > .5){ c.fillStyle = acc; c.beginPath(); c.arc(Math.sin(T*.8)*60, 0, 90, 0, Math.PI*2); c.fill(); c.fillStyle = '#050505'; c.beginPath(); c.arc(Math.sin(T*.8)*60, 0, 42, 0, Math.PI*2); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(Math.sin(T*.8)*60 - 26, -26, 14, 0, Math.PI*2); c.fill(); } break; }
+    case 'rain': c.strokeStyle = 'rgba(200,220,255,.5)'; c.lineWidth = 3; for (let i = 0; i < 90; i++){ const rr = rngS(i + 5), x = -360 + rr()*720, y = -500 + ((T*900 + rr()*1000) % 1000); c.beginPath(); c.moveTo(x, y); c.lineTo(x - 8, y - 40); c.stroke(); } break;
+    case 'warning': { const s = 1 + Math.sin(T*8)*.04; c.scale(s, s); c.fillStyle = acc; c.beginPath(); c.moveTo(0, -220); c.lineTo(230, 180); c.lineTo(-230, 180); c.closePath(); c.fill(); c.fillStyle = '#111'; c.fillRect(-18, -90, 36, 170); c.beginPath(); c.arc(0, 130, 22, 0, Math.PI*2); c.fill(); break; }
+  }
+  c.restore();
+}
+function rngS(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
+const DISP = '"Anton", "Impact", sans-serif', BODYF = '"Archivo", Arial, sans-serif', MONOF = '"JetBrains Mono", Consolas, monospace';
+function drawReel(t, T){
+  const c = R;
+  if (!REEL){ c.fillStyle = '#141413'; c.fillRect(0, 0, RW, RH); c.fillStyle = '#3c3a36'; c.font = `400 64px ${DISP}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('НЕТ РОЛИКА', 360, 600); c.font = `500 26px ${BODYF}`; c.fillStyle = '#8f8b84'; c.fillText('Напиши тему и нажми «Снять ролик»', 360, 670); return; }
+  const S2 = REEL.scenes, total = S2.reduce((a, s) => a + s.dur, 0);
+  let acc = 0, i = 0; t = clamp(t, 0, total - .001); while (i < S2.length - 1 && t >= acc + S2[i].dur){ acc += S2[i].dur; i++; }
+  const s = S2[i], lt = t - acc, p = lt/s.dur, A = REEL.accent;
+  const bg = c.createLinearGradient(0, 0, 0, RH); bg.addColorStop(0, s.bg[0]); bg.addColorStop(1, s.bg[1]); c.fillStyle = bg; c.fillRect(0, 0, RW, RH);
+  c.save(); c.globalAlpha = clamp(lt/.25); visual(s.visual, p, T, A); c.restore();
+  const vg = c.createRadialGradient(360, 640, 300, 360, 640, 900); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.6)'); c.fillStyle = vg; c.fillRect(0, 0, RW, RH);
+  // полоски прогресса как в сторис
+  const sw = (RW - 60 - (S2.length - 1)*6)/S2.length; S2.forEach((_, k) => { c.fillStyle = 'rgba(255,255,255,.25)'; c.fillRect(30 + k*(sw + 6), 40, sw, 6); c.fillStyle = '#fff'; c.fillRect(30 + k*(sw + 6), 40, sw*(k < i ? 1 : k === i ? p : 0), 6); });
+  if (s.kicker){ c.font = `700 26px ${MONOF}`; const w = c.measureText(s.kicker.toUpperCase()).width + 32; c.fillStyle = A; c.fillRect(40, 84, w, 46); c.fillStyle = '#111'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(s.kicker.toUpperCase(), 56, 108); }
+  // крупный текст
+  c.font = `400 104px ${DISP}`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  let size = 104, lines = wrapLines(c, s.text.toUpperCase(), 640); while (lines.length > 3 && size > 64){ size -= 8; c.font = `400 ${size}px ${DISP}`; lines = wrapLines(c, s.text.toUpperCase(), 640); }
+  lines.forEach((l, k) => { const kk = clamp((lt - .08 - k*.1)/.3), y = 820 + k*size*.98 + (1 - kk)*60; c.save(); c.globalAlpha = kk; c.lineWidth = 14; c.strokeStyle = 'rgba(0,0,0,.85)'; c.lineJoin = 'round'; c.strokeText(l, 360, y); c.fillStyle = k === lines.length - 1 ? A : '#fff'; c.fillText(l, 360, y); c.restore(); });
+  // субтитры: по 3 слова, текущее подсвечено
+  const words = s.sub.split(/\s+/).filter(Boolean);
+  if (words.length){ const wi = Math.min(words.length - 1, Math.floor(p*words.length*1.05)), ci = Math.floor(wi/3), chunk = words.slice(ci*3, ci*3 + 3).map(w => w.toUpperCase());
+    c.font = `800 46px ${BODYF}`; const spw = c.measureText(' ').width, tw = chunk.reduce((a2, w) => a2 + c.measureText(w).width, 0) + spw*(chunk.length - 1); let x = 360 - tw/2; c.textAlign = 'left'; c.textBaseline = 'middle';
+    chunk.forEach((w, k) => { const ww = c.measureText(w).width; if (ci*3 + k === wi){ c.fillStyle = A; c.fillRect(x - 10, 1130 - 32, ww + 20, 64); c.fillStyle = '#111'; } else { c.lineWidth = 10; c.strokeStyle = '#000'; c.strokeText(w, x, 1132); c.fillStyle = '#fff'; } c.fillText(w, x, 1132); x += ww + spw; }); }
+  c.save(); c.globalAlpha = .07; c.fillStyle = c.createPattern(GRAIN, 'repeat'); c.translate(Math.random()*160, Math.random()*160); c.fillRect(-160, -160, RW + 320, RH + 320); c.restore();
+  return {i, total};
+}
+let spokenScene = -1;
+function reelLoop(){
+  const T = performance.now()/1000; let t = reelPlaying ? T - reelT0 : .6;
+  const info = drawReel(t, T);
+  if (reelPlaying && info){
+    if (info.i !== spokenScene){ spokenScene = info.i; if ($('vVoice').checked && 'speechSynthesis' in window){ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(REEL.scenes[info.i].sub); u.lang = 'ru-RU'; u.rate = 1.1; const v = speechSynthesis.getVoices().find(v => /^ru/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.speak(u); } }
+    if (t >= info.total + .4){ reelPlaying = false; stopMusic(); if (reelRec && reelRec.state === 'recording') reelRec.stop(); $('vPlay').textContent = '▶ Смотреть'; }
+  }
+  requestAnimationFrame(reelLoop);
+}
+function startMusic(){
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+  if (AC.state === 'suspended') AC.resume();
+  const out = AC.createGain(); out.gain.value = .5; out.connect(AC.destination); if (recDest) out.connect(recDest);
+  const bpm = 96, beat = 60/bpm, t0 = AC.currentTime + .05, nodes = [out];
+  const total = (REEL?.scenes || []).reduce((a, s) => a + s.dur, 0) + 1, notes = [55, 55, 65.4, 49];
+  for (let b = 0; b*beat < total; b++){
+    const t = t0 + b*beat;
+    const k = AC.createOscillator(), kg = AC.createGain(); k.frequency.setValueAtTime(140, t); k.frequency.exponentialRampToValueAtTime(40, t + .18); kg.gain.setValueAtTime(.9, t); kg.gain.exponentialRampToValueAtTime(.001, t + .25); k.connect(kg); kg.connect(out); k.start(t); k.stop(t + .3); nodes.push(k);
+    const n = AC.createOscillator(), ng = AC.createGain(), f = AC.createBiquadFilter(); n.type = 'sawtooth'; n.frequency.value = notes[Math.floor(b/4) % 4]; f.type = 'lowpass'; f.frequency.value = 380; ng.gain.setValueAtTime(.12, t + beat*.5); ng.gain.exponentialRampToValueAtTime(.001, t + beat*.95); n.connect(f); f.connect(ng); ng.connect(out); n.start(t + beat*.5); n.stop(t + beat); nodes.push(n);
+    const buf = AC.createBuffer(1, AC.sampleRate*.05, AC.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2 - 1)*(1 - i/d.length); const h = AC.createBufferSource(), hf = AC.createBiquadFilter(), hg = AC.createGain(); h.buffer = buf; hf.type = 'highpass'; hf.frequency.value = 6000; hg.gain.value = .15; h.connect(hf); hf.connect(hg); hg.connect(out); h.start(t + beat*.5); nodes.push(h);
+  }
+  musicNodes = nodes;
+}
+function stopMusic(){ if (musicNodes){ musicNodes.forEach(n => { try { n.stop ? n.stop() : n.disconnect(); } catch(e){} }); musicNodes[0].disconnect(); musicNodes = null; } if ('speechSynthesis' in window) speechSynthesis.cancel(); }
+$('vPlay').onclick = () => { if (!REEL) return; if (reelPlaying){ reelPlaying = false; stopMusic(); $('vPlay').textContent = '▶ Смотреть'; return; } spokenScene = -1; reelT0 = performance.now()/1000; reelPlaying = true; startMusic(); $('vPlay').textContent = '■ Стоп'; };
+$('vRec').onclick = () => {
+  if (!REEL || reelRec?.state === 'recording') return;
+  if (!window.MediaRecorder || !RC.captureStream){ $('vMsg').textContent = 'Этот браузер не умеет записывать видео. Открой в Chrome или Edge.'; return; }
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (!recDest) recDest = AC.createMediaStreamDestination();
+  const type = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  const chunks = [], st = new MediaStream([...RC.captureStream(30).getVideoTracks(), ...recDest.stream.getAudioTracks()]);
+  reelRec = new MediaRecorder(st, type ? {mimeType:type, videoBitsPerSecond:8e6} : {videoBitsPerSecond:8e6});
+  reelRec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  reelRec.onstop = () => { reelBlob = new Blob(chunks, {type:reelRec.mimeType || type}); $('vRec').disabled = false; $('vRec').textContent = 'Записать файл'; $('vSave').hidden = false; $('vKeep').hidden = useDb && assets && reelBlob.size > 20*1048576; $('vMsg').textContent = `Записано: ${(reelBlob.size/1048576).toFixed(1)} МБ. Скачай или сохрани в проекты.`; };
+  reelRec.start(500); $('vRec').disabled = true; $('vRec').textContent = '● Пишу…'; $('vMsg').textContent = 'Идёт запись. Не переключай вкладку до конца ролика.';
+  spokenScene = -1; reelT0 = performance.now()/1000; reelPlaying = true; startMusic(); $('vPlay').textContent = '■ Стоп';
+};
+const reelName = () => (REEL?.title || 'rolik').replace(/[\\/:*?"<>|]+/g, '-') + (/mp4/.test(reelBlob?.type) ? '.mp4' : '.webm');
+$('vSave').onclick = () => reelBlob && saveData(reelName(), reelBlob);
+$('vKeep').onclick = async () => {
+  if (!reelBlob) return; $('vKeep').disabled = true; $('vMsg').textContent = 'Сохраняю в проекты…';
+  try { const base = {title:REEL.title, type:'video', by:'Марк', task:reelProj?.task || REEL.title, spec:REEL};
+    if (useDb && assets){ const r = await assets.upload(reelBlob, {type:/mp4/.test(reelBlob.type) ? 'video/mp4' : 'video/webm'}); await addProject({...base, assetId:r.id}); }
+    else await addProject({...base, blob:reelBlob}); $('vMsg').textContent = 'Сохранено. Файл лежит в «Проектах».'; $('vKeep').hidden = true; }
+  catch(e){ $('vMsg').className = 'msg err'; $('vMsg').textContent = e?.code === 'too_large' ? 'Файл больше 20 МБ, в проекты не влезет. Скачай его.' : 'Не получилось сохранить. Скачай файл.'; }
+  finally { $('vKeep').disabled = false; }
+};
+$('vGo').onclick = () => { const t = $('vText').value.trim(); if (!t){ $('vMsg').textContent = 'Напиши тему ролика.'; return; } $('tText').value = 'Сделай вертикальный ролик для TikTok: ' + t; runTask('Сделай вертикальный ролик для TikTok (тип video): ' + t, 'mark'); $('vMsg').textContent = 'Марк пишет раскадровку… обычно это 20–60 секунд.'; };
+
+/* ===================== диджей ===================== */
+const SCALES = {minor:[0, 2, 3, 5, 7, 8, 10], major:[0, 2, 4, 5, 7, 9, 11], phrygian:[0, 1, 3, 5, 7, 8, 10], dorian:[0, 2, 3, 5, 7, 9, 10], harmonic:[0, 2, 3, 5, 7, 8, 11]};
+const BEAT = {playing:false, lvl:0, title:''};
+const DJ = {ac:null, timer:0, track:null, step:0, bar:0, secIdx:0, secBar:0, nextT:0, fileEl:null, localIdx:-1};
+let LOCAL_TRACKS = [];
+function djInit(){
+  if (DJ.ac) return;
+  const ac = DJ.ac = new (window.AudioContext || window.webkitAudioContext)();
+  const comp = ac.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+  DJ.vol = ac.createGain(); DJ.vol.gain.value = +$('djVol').value;
+  DJ.an = ac.createAnalyser(); DJ.an.fftSize = 256; DJ.bins = new Uint8Array(DJ.an.frequencyBinCount);
+  comp.connect(DJ.vol); DJ.vol.connect(DJ.an); DJ.an.connect(ac.destination);
+  DJ.bus = ac.createGain(); DJ.lofi = ac.createBiquadFilter(); DJ.lofi.type = 'lowpass'; DJ.lofi.frequency.value = 20000; DJ.bus.connect(DJ.lofi); DJ.lofi.connect(comp);
+  DJ.rev = ac.createConvolver(); const len = ac.sampleRate*2.4, ib = ac.createBuffer(2, len, ac.sampleRate); for (let c = 0; c < 2; c++){ const d = ib.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random()*2 - 1)*Math.pow(1 - i/len, 3); } DJ.rev.buffer = ib;
+  DJ.revGain = ac.createGain(); DJ.revGain.gain.value = .25; DJ.rev.connect(DJ.revGain); DJ.revGain.connect(comp);
+  const nb = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), nd = nb.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random()*2 - 1; DJ.noise = nb;
+  const cb = ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate), cd = cb.getChannelData(0); for (let i = 0; i < cd.length; i++) cd[i] = Math.random() < .0009 ? (Math.random()*2 - 1) : (Math.random()*2 - 1)*.012;
+  const cs = ac.createBufferSource(); cs.buffer = cb; cs.loop = true; const cf = ac.createBiquadFilter(); cf.type = 'highpass'; cf.frequency.value = 900; DJ.crackle = ac.createGain(); DJ.crackle.gain.value = 0; cs.connect(cf); cf.connect(DJ.crackle); DJ.crackle.connect(DJ.bus); cs.start();
+  const wl = ac.createOscillator(); wl.frequency.value = .55; DJ.wob = ac.createGain(); DJ.wob.gain.value = 0; wl.connect(DJ.wob); wl.start();
+  DJ.dist = ac.createWaveShaper(); const cu = new Float32Array(1024); for (let i = 0; i < 1024; i++){ const x = i*2/1024 - 1; cu[i] = (1 + 20)*x/(1 + 20*Math.abs(x)); } DJ.dist.curve = cu; const dg = ac.createGain(); dg.gain.value = .55; DJ.dist.connect(dg); dg.connect(DJ.bus);
+}
+const mtof = m => 440*Math.pow(2, (m - 69)/12);
+function env(gn, t, a, peak, d){ gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(Math.max(.0002, peak), t + a); gn.gain.exponentialRampToValueAtTime(.0001, t + a + d); }
+function send(node, wet){ node.connect(DJ.bus); if (wet > 0){ const s = DJ.ac.createGain(); s.gain.value = wet; node.connect(s); s.connect(DJ.rev); } }
+function vKick(t){ const ac = DJ.ac, o = ac.createOscillator(), gn = ac.createGain(); o.frequency.setValueAtTime(165, t); o.frequency.exponentialRampToValueAtTime(42, t + .12); env(gn, t, .003, 1, .36); o.connect(gn); send(gn, 0); o.start(t); o.stop(t + .45); }
+function vNoise(t, type, f, q, peak, dur, wet){ const ac = DJ.ac, s = ac.createBufferSource(), fl = ac.createBiquadFilter(), gn = ac.createGain(); s.buffer = DJ.noise; fl.type = type; fl.frequency.value = f; fl.Q.value = q; env(gn, t, .002, peak, dur); s.connect(fl); fl.connect(gn); send(gn, wet); s.start(t, Math.random()*.5); s.stop(t + dur + .05); }
+function vSnare(t){ vNoise(t, 'bandpass', 1900, .8, .55, .18, .3); const ac = DJ.ac, o = ac.createOscillator(), gn = ac.createGain(); o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(140, t + .08); env(gn, t, .002, .3, .1); o.connect(gn); send(gn, .1); o.start(t); o.stop(t + .15); }
+function vClap(t){ for (let k = 0; k < 3; k++) vNoise(t + k*.012, 'bandpass', 1200, 1.2, .42, k === 2 ? .2 : .07, .35); }
+function vHat(t, open){ vNoise(t, 'highpass', 7500, .7, open ? .2 : .14, open ? .25 : .04, .05); }
+function vTone(t, midi, dur, kind, vel = 1){
+  const ac = DJ.ac, f = mtof(midi), gn = ac.createGain(), fl = ac.createBiquadFilter(); fl.type = 'lowpass';
+  let oscs = [];
+  if (kind === 'cowbell'){
+    oscs = [1, 1.48].map(r => { const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = f*r; o.connect(fl); return o; });
+    fl.type = 'bandpass'; fl.frequency.value = f*1.25; fl.Q.value = 3; env(gn, t, .002, .22*vel, .32); fl.connect(gn); send(gn, .25);
+    oscs.forEach(o => { o.start(t); o.stop(t + dur + .6); }); return;
+  }
+  if (kind === 'choir'){
+    const mixg = ac.createGain(); mixg.gain.value = .5;
+    oscs = [-9, 0, 8].map(dt => { const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; DJ.wob.connect(o.detune); o.connect(mixg); return o; });
+    for (const [fr, q] of [[700, 6], [1150, 7], [2600, 8]]){ const b = ac.createBiquadFilter(); b.type = 'bandpass'; b.frequency.value = fr; b.Q.value = q; mixg.connect(b); b.connect(gn); }
+    gn.gain.setValueAtTime(.0001, t); gn.gain.linearRampToValueAtTime(.22*vel, t + .5); gn.gain.setValueAtTime(.22*vel, t + Math.max(.55, dur - .1)); gn.gain.linearRampToValueAtTime(.0001, t + dur + .8);
+    send(gn, .7); oscs.forEach(o => { o.start(t); o.stop(t + dur + 1); }); return;
+  }
+  if (kind === '808'){ const o = ac.createOscillator(); o.frequency.setValueAtTime(f*1.6, t); o.frequency.exponentialRampToValueAtTime(f, t + .05); oscs = [o]; fl.frequency.value = 900; env(gn, t, .005, .85*vel, Math.max(.3, dur)); o.connect(fl); fl.connect(gn); gn.connect(DJ.dist); }
+  else {
+    const types = {sub:['sine'], saw:['sawtooth', 'sawtooth'], pluck:['square'], lead:['sawtooth', 'square'], bell:['sine', 'sine'], pad:['sawtooth', 'sawtooth', 'triangle']}[kind] || ['triangle'];
+    oscs = types.map((ty, i) => { const o = ac.createOscillator(); o.type = ty; o.frequency.value = kind === 'bell' && i ? f*2.76 : f; o.detune.value = (i - (types.length - 1)/2)*(kind === 'pad' ? 12 : 7); if (kind !== 'sub') DJ.wob.connect(o.detune); o.connect(fl); return o; });
+    if (kind === 'pad'){ fl.frequency.value = 1300; gn.gain.setValueAtTime(.0001, t); gn.gain.linearRampToValueAtTime(.08*vel, t + .3); gn.gain.setValueAtTime(.08*vel, t + Math.max(.35, dur - .1)); gn.gain.linearRampToValueAtTime(.0001, t + dur + .4); }
+    else if (kind === 'pluck' || kind === 'bell'){ fl.frequency.setValueAtTime(kind === 'bell' ? 6000 : 3600, t); fl.frequency.exponentialRampToValueAtTime(500, t + .3); env(gn, t, .003, (kind === 'bell' ? .16 : .14)*vel, kind === 'bell' ? .9 : .28); }
+    else if (kind === 'sub'){ fl.frequency.value = 300; env(gn, t, .01, .45*vel, dur); }
+    else { fl.frequency.setValueAtTime(2400, t); fl.frequency.exponentialRampToValueAtTime(700, t + dur); env(gn, t, .01, .11*vel, dur); }
+    fl.connect(gn); send(gn, kind === 'pad' || kind === 'bell' || kind === 'lead' ? .35 : .1);
+  }
+  oscs.forEach(o => { o.start(t); o.stop(t + dur + .6); });
+}
+function normTrack(t){
+  const pat = s => { s = String(s || ''); return Array.from({length:16}, (_, i) => s.length ? s[i % s.length] : '.'); };
+  const arr = (a, n) => Array.from({length:n}, (_, i) => { const v = Array.isArray(a) && a.length ? a[i % a.length] : null; return v === null || v === undefined || v === '.' || v === '' || isNaN(+v) ? null : +v; });
+  const ALL = ['kick', 'snare', 'clap', 'hat', 'bass', 'lead', 'pad'];
+  const secs = Array.isArray(t.sections) && t.sections.length ? t.sections : [{name:'интро', bars:4, layers:['pad', 'hat']}, {name:'куплет', bars:8, layers:['kick', 'snare', 'hat', 'bass', 'pad']}, {name:'дроп', bars:8, layers:ALL}, {name:'аутро', bars:4, layers:['pad', 'lead']}];
+  return {title:String(t.title || 'Без названия'), style:String(t.style || ''), line:String(t.line || ''), req:String(t.req || ''),
+    bpm:clamp(+t.bpm || 90, 60, 180), swing:clamp(+t.swing || 0, 0, .35), root:clamp(Math.round(+t.root || 45), 33, 57), scale:SCALES[t.scale] ? t.scale : 'minor',
+    chords:(Array.isArray(t.chords) && t.chords.length ? t.chords : [0, 5, 3, 4]).slice(0, 8).map(v => Math.round(+v) || 0),
+    drums:{kick:pat(t.drums?.kick || 'x...x...x...x...'), snare:pat(t.drums?.snare || '....x.......x...'), clap:pat(t.drums?.clap), hat:pat(t.drums?.hat || 'x.x.x.x.x.x.x.x.')},
+    bass:arr(t.bass, 16), lead:arr(t.lead, 32),
+    sounds:{bass:['808', 'saw', 'sub'].includes(t.sounds?.bass) ? t.sounds.bass : '808', lead:['pluck', 'lead', 'bell', 'cowbell', 'choir'].includes(t.sounds?.lead) ? t.sounds.lead : 'pluck', pad:['pad', 'choir'].includes(t.sounds?.pad) ? t.sounds.pad : 'pad'},
+    fx:{reverb:clamp(+t.fx?.reverb || .25), lofi:clamp(+t.fx?.lofi || 0), crackle:clamp(+t.fx?.crackle || 0), wobble:clamp(+t.fx?.wobble || 0)},
+    about:String(t.about || ''), real:(Array.isArray(t.real) ? t.real : []).slice(0, 6).map(r => ({artist:String(r?.artist || ''), title:String(r?.title || '')})).filter(r => r.artist || r.title),
+    sections:secs.slice(0, 10).map(s => ({name:String(s.name || ''), bars:clamp(Math.round(+s.bars || 4), 1, 16), layers:(Array.isArray(s.layers) ? s.layers : ALL).map(String)}))};
+}
+const noteOf = (T, deg, oct = 0) => { const sc = SCALES[T.scale], d = Math.round(deg), o = Math.floor(d/7); return T.root + sc[((d % 7) + 7) % 7] + 12*(o + oct); };
+function djTick(){
+  const ac = DJ.ac, T = DJ.track; if (!T) return;
+  const sp = 60/T.bpm/4;
+  while (DJ.nextT < ac.currentTime + .15){
+    const s = DJ.step % 16, sec = T.sections[DJ.secIdx], L = new Set(sec.layers), t = DJ.nextT + (s % 2 ? T.swing*sp : 0), ch = T.chords[DJ.bar % T.chords.length];
+    if (L.has('kick') && T.drums.kick[s] === 'x') vKick(t);
+    if (L.has('snare') && T.drums.snare[s] === 'x') vSnare(t);
+    if (L.has('clap') && T.drums.clap[s] === 'x') vClap(t);
+    if (L.has('hat') && /[xo]/.test(T.drums.hat[s])) vHat(t, T.drums.hat[s] === 'o');
+    if (L.has('bass') && T.bass[s] != null){ let n = 1; while (n < 8 && s + n < 16 && T.bass[s + n] == null) n++; vTone(t, noteOf(T, T.bass[s] + ch, -1), n*sp*.95, T.sounds.bass); }
+    if (L.has('lead')){ const ls = (DJ.bar % 2)*16 + s; if (T.lead[ls] != null) vTone(t, noteOf(T, T.lead[ls], 1), sp*2, T.sounds.lead, .9); }
+    if ((L.has('pad') || L.has('chords')) && s === 0) [0, 2, 4].forEach(k => vTone(t, noteOf(T, ch + k, 0), sp*16, T.sounds.pad, .8));
+    if (L.has('choir') && s === 0 && T.sounds.pad !== 'choir') [0, 4].forEach(k => vTone(t, noteOf(T, ch + k, 1), sp*16, 'choir', .7));
+    DJ.nextT += sp; DJ.step++;
+    if (DJ.step % 16 === 0){ DJ.bar++; DJ.secBar++; if (DJ.secBar >= sec.bars){ DJ.secBar = 0; DJ.secIdx++; if (DJ.secIdx >= T.sections.length) DJ.secIdx = T.sections.length > 1 ? 1 : 0; } }
+  }
+  const sec = T.sections[DJ.secIdx]; $('djMeta').textContent = `${T.style ? T.style + ' · ' : ''}${Math.round(T.bpm)} BPM · ${sec.name} · такт ${DJ.secBar + 1}/${sec.bars}`;
+}
+function djHalt(){ clearInterval(DJ.timer); DJ.timer = 0; DJ.track = null; if (DJ.fileEl){ DJ.fileEl.pause(); } if (DJ.crackle){ DJ.crackle.gain.value = 0; DJ.wob.gain.value = 0; } }
+const SEARCH = [['YouTube', q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q)], ['Яндекс Музыка', q => 'https://music.yandex.ru/search?text=' + encodeURIComponent(q)], ['SoundCloud', q => 'https://soundcloud.com/search?q=' + encodeURIComponent(q)]];
+function renderReal(T){
+  const el = $('djReal'), box = $('djRealBox'); if (!el) return;
+  const items = T ? T.real : [];
+  box.hidden = !(T && (items.length || T.req));
+  if (box.hidden) return;
+  $('djAbout').textContent = T.about || '';
+  const rows = items.length ? items : [{artist:'', title:T.req}];
+  el.innerHTML = '';
+  rows.forEach(r => { const q = [r.artist, r.title].filter(Boolean).join(' — '); const d = document.createElement('div'); d.className = 'trk';
+    d.innerHTML = `<div><b>${esc(r.title || r.artist)}</b><br><span>${esc(r.artist)}</span></div><div class="row">${SEARCH.map(([n, u]) => `<a class="btn" href="${u(q)}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}</div>`; el.append(d); });
+}
+function djPlay(spec){
+  djInit(); djHalt(); if (DJ.ac.state === 'suspended') DJ.ac.resume();
+  const T = DJ.track = normTrack(spec);
+  DJ.revGain.gain.value = .08 + T.fx.reverb*.45; DJ.lofi.frequency.value = T.fx.lofi > .05 ? lerp(16000, 2200, T.fx.lofi) : 20000;
+  DJ.crackle.gain.value = T.fx.crackle*1.4; DJ.wob.gain.value = T.fx.wobble*28; renderReal(T);
+  DJ.step = 0; DJ.bar = 0; DJ.secIdx = 0; DJ.secBar = 0; DJ.nextT = DJ.ac.currentTime + .12; DJ.localIdx = -1;
+  DJ.timer = setInterval(djTick, 25);
+  BEAT.playing = true; BEAT.title = T.title;
+  $('djState').textContent = '● в эфире'; $('djTitle').textContent = T.title;
+  const a = agent('dj'); if (a) say(a, T.line || 'Ставлю: ' + T.title, 6);
+  renderDjHist(); renderLocal();
+}
+function djPlayFile(i){
+  djInit(); djHalt(); if (DJ.ac.state === 'suspended') DJ.ac.resume();
+  const f = LOCAL_TRACKS[i]; if (!f) return;
+  if (!DJ.fileEl){ DJ.fileEl = new Audio(); DJ.fileSrc = DJ.ac.createMediaElementSource(DJ.fileEl); DJ.fileSrc.connect(DJ.bus); DJ.fileEl.onended = () => { if (DJ.localIdx >= 0) djPlayFile((DJ.localIdx + 1) % LOCAL_TRACKS.length); }; DJ.fileEl.ontimeupdate = () => { if (DJ.localIdx >= 0 && DJ.fileEl.duration) $('djMeta').textContent = `свой трек · ${fmtTime(DJ.fileEl.currentTime)} / ${fmtTime(DJ.fileEl.duration)}`; }; }
+  DJ.lofi.frequency.value = 20000; DJ.revGain.gain.value = 0;
+  DJ.localIdx = i; DJ.fileEl.src = f.url; DJ.fileEl.play().catch(() => {});
+  BEAT.playing = true; BEAT.title = f.name; $('djState').textContent = '● в эфире'; $('djTitle').textContent = f.name.replace(/\.[^.]+$/, '');
+  const a = agent('dj'); if (a) say(a, 'Твой трек, шеф. Делаю громче.', 4);
+  renderLocal(); renderDjHist();
+}
+const fmtTime = s => `${Math.floor(s/60)}:${pad2s(Math.floor(s % 60))}`, pad2s = n => String(n).padStart(2, '0');
+function djStop(){ djHalt(); renderReal(null); DJ.localIdx = -1; BEAT.playing = false; BEAT.title = ''; $('djState').textContent = 'тишина'; $('djTitle').textContent = 'Ничего не играет'; $('djMeta').textContent = 'Закажи трек слева'; renderDjHist(); renderLocal(); }
+function djLevel(){
+  if (!DJ.an || !BEAT.playing){ BEAT.lvl *= .85; return; }
+  DJ.an.getByteFrequencyData(DJ.bins); let s = 0; for (let i = 1; i < 6; i++) s += DJ.bins[i]; BEAT.lvl = lerp(BEAT.lvl, clamp((s/5/255 - .35)*2.2), .5);
+  const c = $('djViz'), x = c.getContext('2d'), n = 48, w = c.width/n;
+  x.fillStyle = '#141413'; x.fillRect(0, 0, c.width, c.height);
+  for (let i = 0; i < n; i++){ const v = DJ.bins[Math.floor(i*1.6) + 1]/255, h = v*c.height*.92; x.fillStyle = i < 8 ? '#d8432f' : '#d4a84b'; for (let y = c.height - 4; y > c.height - h; y -= 6) x.fillRect(i*w + 2, y - 4, w - 4, 4); }
+}
+async function djRequest(q){
+  if (!sample){ $('djMsg').className = 'msg err'; $('djMsg').textContent = 'Claude не подключён. Нажми кнопку «Claude» вверху справа.'; return; }
+  const a = agent('dj'); if (a){ ACT[a.id].busy = true; say(a, 'Щас сведу.', 3); }
+  $('djGo').disabled = true; $('djMsg').className = 'msg'; $('djMsg').textContent = 'Рико сводит трек… обычно 10–40 секунд.';
+  try {
+    const t = await sample.json(`Ты — Рико, диджей бруталистского офиса «Монолит». Заказ: «${q}».
+Синтезатор в браузере умеет: бочка, малый, клэп, хэт, бас (808 с перегрузом, saw, sub), мелодия (pluck, lead, bell, cowbell — мелодичный коубелл фонка, choir — призрачный хор), пэд (pad или choir), эффекты: reverb, lofi (глухой фильтр), crackle (треск винила), wobble (плывущая плёнка).
+Если назван реальный артист или песня:
+1) Определи его фирменный звук (темп, лад, ударные, тембры, атмосферу) и передай его доступными средствами. Например, Black Kray — русский андеграунд клауд-рэп/витч-хаус: медленно и вязко (~65–75 BPM или 130–150 в полутемпе: малый на 3-ю долю), минор/фригийский, 808 с длинным хвостом, призрачный хор и колокольчики, много реверба, wobble 0.5–0.8, crackle 0.4–0.7, lofi 0.3–0.5, редкие хэты.
+2) Мелодию НЕ копируй: сочини свою, в его духе.
+3) В "real" перечисли до 5 реальных треков этого артиста (или самых известных треков жанра), которые ты точно знаешь. Если не уверен в названиях, дай меньше или оставь только имя артиста в "artist" и пустой "title".
+Ответь только JSON:
+{"title":"придуманное название трека","style":"жанр","about":"1 фраза про фирменный звук артиста/жанра, по-русски","line":"короткая фраза диджея в офис, по-русски","real":[{"artist":"...","title":"..."}],"bpm":60-180,"swing":0-0.3,"root":"MIDI-номер тоники 36-52","scale":"minor|major|phrygian|dorian|harmonic","chords":[4 ступени аккордов 0-6, по аккорду на такт],"drums":{"kick":"16 символов из x и .","snare":"16 символов","clap":"16 символов","hat":"16 символов из x, o (открытый) и ."},"bass":[16 значений: ступень относительно аккорда (0-7) или null],"lead":[32 значения на 2 такта: ступень гаммы 0-11 или null; запоминающийся мотив],"sounds":{"bass":"808|saw|sub","lead":"pluck|lead|bell|cowbell|choir","pad":"pad|choir"},"fx":{"reverb":0-1,"lofi":0-1,"crackle":0-1,"wobble":0-1},"sections":[{"name":"интро","bars":4,"layers":["pad","hat"]}]}
+sections: 4–6 частей с нарастанием (интро, куплет, дроп и т.п.), слои только из kick, snare, clap, hat, bass, lead, pad, choir. Подсказки: фонк ~130-145 BPM, phrygian, 808 и cowbell; лоу-фай ~75-85 BPM, swing 0.2, lofi 0.6, crackle 0.5; хаус ~124, бочка на каждую долю; майами-диско 80-х ~110, major, saw-бас.`, {cache:false});
+    t.req = q; S.tracks.push(t); S.tracks = S.tracks.slice(-20); queueSave();
+    djPlay(t); $('djMsg').textContent = `Играет «${t.title || 'трек'}». Закажи следующий, когда надоест.`;
+    log('Рико', 'ставит: ' + (t.title || q));
+  } catch(e){ $('djMsg').className = 'msg err'; $('djMsg').textContent = errText(e); if (a) say(a, 'Вертушка заела. Ещё раз?', 3); }
+  finally { if (a){ ACT[a.id].busy = false; renderTeam(); } $('djGo').disabled = false; }
+}
+function renderDjHist(){
+  const el = $('djHist'); if (!el) return;
+  const L = [...S.tracks].reverse();
+  el.innerHTML = L.length ? '' : '<div class="empty">Здесь будут треки, которые ставил Рико. Любой можно включить снова.</div>';
+  L.forEach(t => { const on = BEAT.playing && DJ.track && DJ.track.title === String(t.title || 'Без названия') && DJ.localIdx < 0; const r = document.createElement('div'); r.className = 'trk' + (on ? ' on' : '');
+    r.innerHTML = `<div><b>${esc(t.title)}</b><br><span>${esc(t.style || '')} · ${Math.round(+t.bpm || 0)} BPM${t.req ? ' · «' + esc(t.req) + '»' : ''}</span></div><button class="btn">${on ? 'Играет' : '▶'}</button>`;
+    r.querySelector('button').onclick = () => on ? djStop() : djPlay(t); el.append(r); });
+}
+function renderLocal(){
+  const el = $('djLocal'); el.innerHTML = '';
+  LOCAL_TRACKS.forEach((f, i) => { const on = BEAT.playing && DJ.localIdx === i; const r = document.createElement('div'); r.className = 'trk' + (on ? ' on' : ''); r.innerHTML = `<div><b>${esc(f.name)}</b><br><span>${(f.size/1048576).toFixed(1)} МБ</span></div><button class="btn">${on ? 'Играет' : '▶'}</button>`; r.querySelector('button').onclick = () => on ? djStop() : djPlayFile(i); el.append(r); });
+}
+$('djGo').onclick = () => { const q = $('djText').value.trim(); if (!q){ $('djMsg').textContent = 'Напиши, что поставить.'; return; } djRequest(q); };
+$('djText').onkeydown = e => { if (e.key === 'Enter') $('djGo').click(); };
+$('djStop').onclick = djStop;
+$('djVol').oninput = () => { if (DJ.vol) DJ.vol.gain.value = +$('djVol').value; };
+$('djFiles').onchange = () => { for (const f of $('djFiles').files) LOCAL_TRACKS.push({name:f.name, size:f.size, url:URL.createObjectURL(f)}); $('djFiles').value = ''; renderLocal(); if (!BEAT.playing && LOCAL_TRACKS.length) djPlayFile(0); };
+['В стиле Black Kray', 'Мрачный фонк', 'Лоу-фай для работы', 'Майами 80-х', 'Трэп с 808', 'Хаус', 'Драм-н-бейс', 'Эпик для апокалипсиса'].forEach(q => { const b = document.createElement('button'); b.textContent = q; b.onclick = () => { $('djText').value = q; djRequest(q); }; $('djQuick').append(b); });
+
+/* ===================== вкладки ===================== */
+function openTab(k){ document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.p === k)); document.querySelectorAll('.pane').forEach(p => p.hidden = p.id !== 'p-' + k); if (k === 'chat') renderChat(); }
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => openTab(b.dataset.p));
+
+/* ===================== запуск ===================== */
+function chip(id, ok, on, off){ const c = $(id); c.className = 'chip ' + (ok ? 'on' : 'off'); c.textContent = ok ? on : off; }
+function applyState(d){
+  if (!d) return;
+  if (Array.isArray(d.agents) && d.agents.length){
+    S.agents = d.agents.map((a, i) => { const def = DEF_AGENTS.find(x => x.id === a.id) || DEF_AGENTS[i] || DEF_AGENTS[0]; return {...def, ...a, look:{...def.look, ...(a.look || {})}}; });
+    if (!S.agents.some(a => a.id === 'dj')) S.agents.push(structuredClone(DEF_AGENTS.find(x => x.id === 'dj')));
+  }
+  S.ideas = d.ideas || []; S.log = d.log || []; S.chats = d.chats || {}; S.banter = d.banter || []; S.tracks = d.tracks || []; renderDjHist();
+  initActors(); renderTeam(); renderIdeas(); renderFeed();
+}
+async function boot(){
+  initActors(); renderTeam(); renderIdeas(); renderProjects(); renderFiles(); renderFeed(); renderDjHist();
+  requestAnimationFrame(frame); requestAnimationFrame(reelLoop);
+  const cl = window.claude;
+  let user = null;
+  [nativeSample, db, assets, downloads, user] = cl ? await Promise.all(['sample', 'db', 'assets', 'downloads', 'user'].map(n => cl.use(n).catch(() => null))) : [null, null, null, null, null];
+  let canWrite = false;
+  if (db){ try { canWrite = user ? (user.isOwner() || (await user.can('data.write')) !== false) : true; } catch(e){ canWrite = true; } }
+  useDb = !!db && canWrite;
+  pickAi();
+  if (!sample && !cl) setTimeout(connectModal, 600);
+  if (useDb){
+    db.collection('queue').orderBy('createdAt', 'desc').limit(20).onSnapshot(q => renderQueue(q.docs.map(d => d.data())), () => {});
+    stateRef = db.doc('office/state');
+    let first = true;
+    stateRef.onSnapshot(sn => { if (sn.exists){ const d = sn.data(); const js = JSON.stringify(d); if (js !== lastSaved){ lastSaved = js; applyState(structuredClone(d)); } } else if (first) queueSave(); first = false; }, () => {});
+    db.collection('projects').orderBy('createdAt', 'desc').limit(80).onSnapshot(q => { PROJECTS = q.docs.map(d => d.data()); renderProjects(); }, () => {});
+    db.collection('files').orderBy('createdAt', 'desc').limit(80).onSnapshot(q => { FILES = q.docs.map(d => d.data()); renderFiles(); }, () => {});
+  } else {
+    await loadLocal();
+    if (!S.log.length) log('Тони', 'Офис открыт. Мир принадлежит нам.');
+  }
+}
+document.fonts?.load?.('400 40px Anton').finally?.(() => {});
+boot();
+</script>
+
+</body>
+</html>
